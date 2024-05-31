@@ -2,12 +2,22 @@ import { NextRequest, NextResponse } from "next/server"
 import { mongodb } from "../../../lib/utils/mongodb"
 import Post from "../../../lib/utils/schemas/PostSchema"
 import User from "../../../lib/utils/schemas/UserSchema"
+import { headers } from "next/headers"
+import cloudinary from "../../../lib/utils/cloudinary"
 
 export const POST = async(req: NextRequest) => {
     if(req.method === "POST"){
         try {
             mongodb()
-            const { content, authToken } = await req.json()
+            const authToken = headers().get('authorization').split(' ')[1]
+
+            const { content, photo } = await req.json()
+
+             const uploadedImageResponse = await cloudinary.uploader.upload(
+               photo,
+               "setsuna",
+               { resource_type: "image" }
+             );
             const user = await User.findOne({ authToken: authToken })
             if(!user){
                 return new NextResponse(JSON.stringify({ message: "No user found" }), {

@@ -47,7 +47,7 @@ export default function Home () {
 
       const body = {
         content: content,
-        authToken: localStorage.getItem('authToken')
+        photo: photo
       };
       const res = await axios.post("api/post", body, { headers: options });
       if(res.status !== 201){
