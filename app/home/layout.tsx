@@ -1,4 +1,5 @@
 import SideBar from "../../components/SideBar";
+import { PostProvider } from "../../context/PostContext";
 
 export const metadata = {
   title: "Home",
@@ -13,10 +14,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main className="flex w-full min-h-screen">
+        <PostProvider>
+          <main className="flex w-full min-h-screen">
             {/* <SideBar/> */}
-          {children}
-        </main>
+            {children}
+          </main>
+        </PostProvider>
       </body>
     </html>
   );

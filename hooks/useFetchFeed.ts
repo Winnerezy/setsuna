@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { PostContext } from "../context/PostContext";
 
 export const useFetchFeed = () => {
-const [posts, setPosts] = useState([]);
+const { posts, setPosts } = useContext(PostContext)
 const [error, setError] = useState(null)
 const [isLoading, setIsLoading] = useState(false)
 
@@ -23,12 +24,13 @@ const fetchFeed = useCallback(async () => {
   }
 }, []);
 
+console.log(posts)
+
 useEffect(() => {
   fetchFeed();
 }, []);
 
 const refetch = () => {
-  console.log("yeah");
     fetchFeed()
     
 }

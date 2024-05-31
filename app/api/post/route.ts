@@ -13,11 +13,11 @@ export const POST = async(req: NextRequest) => {
 
             const { content, photo } = await req.json()
 
-             const uploadedImageResponse = await cloudinary.uploader.upload(
-               photo,
-               "setsuna",
-               { resource_type: "image" }
-             );
+            //  const uploadedImageResponse = await cloudinary.uploader.upload(
+            //    photo,
+            //    "setsuna",
+            //    { resource_type: "image" }
+            //  );
             const user = await User.findOne({ authToken: authToken })
             if(!user){
                 return new NextResponse(JSON.stringify({ message: "No user found" }), {
