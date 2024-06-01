@@ -1,17 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import { mongodb } from "../../../lib/utils/mongodb";
-import Post from "../../../lib/utils/schemas/PostSchema";
-import User from "../../../lib/utils/schemas/UserSchema";
 import { headers } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
+import User from "../../../lib/utils/schemas/UserSchema";
+import Post from "../../../lib/utils/schemas/PostSchema";
+import { mongodb } from "../../../lib/utils/mongodb";
 
 export const GET = async(req: NextRequest, res: NextResponse) => {
   try {
-    mongodb()
-    const authToken = headers().get('authorization').split(' ')[1]; // getting the authorization from the request
-
-    const { username } = await User.findOne({ authToken: authToken });
-    const userPosts = await Post.find({ author: username }).sort({ createdAt: -1 })
-    return new NextResponse(JSON.stringify(userPosts));
+    await mongodb()
+    const authToken = headers().get('authorization').split(' ')[1];
+    const user = await User.findOne({ authToken: authToken })
+    const posts = await Post.find({ author: user.username })
+    return new NextResponse(JSON.stringify(posts), {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     // Handle errors here
     console.error(error);

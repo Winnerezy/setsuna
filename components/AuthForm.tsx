@@ -16,9 +16,9 @@ import {
 import CustomButton from "./CustomButton";
 import { authFormSchema } from "../lib/utils/authFormSchema";
 import Link from "next/link";
-import CustomInput from "./CustomInput";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Input } from "../@/components/ui/input";
 
 export default function AuthForm({ type }: { type: string }) {
   const [user, setUser] = useState(null);
@@ -84,63 +84,133 @@ export default function AuthForm({ type }: { type: string }) {
           {type === "sign-up" ? (
             <main className="space-y-6 mt-36">
               <div className="flex gap-x-4">
-                <CustomInput
+                <FormField
                   control={form.control}
-                  label="First Name"
                   name="firstname"
-                  placeholder="Enter your first name"
-                  className={"max-w-80"}
+                  render={({ field }) => (
+                    <FormItem className="w-full flex-grow space-y-2">
+                      <FormLabel>First Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your first name"
+                          {...field}
+                          className={`p-2 rounded-[10px] w-full flex-grow outline-none text-black`}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
 
-                <CustomInput
+                <FormField
                   control={form.control}
-                  label="Last Name"
                   name="lastname"
-                  placeholder="Enter your last name"
-                  className={"max-w-80"}
+                  render={({ field }) => (
+                    <FormItem className="w-full flex-grow space-y-2">
+                      <FormLabel>Last Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter your last name"
+                          {...field}
+                          className={`p-2 rounded-[10px] w-full flex-grow outline-none text-black`}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
 
-              <CustomInput
+              <FormField
                 control={form.control}
-                label="Username"
                 name="username"
-                placeholder="Enter your username"
-                className=""
+                render={({ field }) => (
+                  <FormItem className="w-full flex-grow space-y-2">
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your username"
+                        {...field}
+                        className={`p-2 rounded-[10px] w-full flex-grow outline-none text-black`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
-              <CustomInput
+              <FormField
                 control={form.control}
-                label="Email"
                 name="email"
-                placeholder="Enter your email address"
-                className=""
+                render={({ field }) => (
+                  <FormItem className="w-full flex-grow space-y-2">
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your email address"
+                        {...field}
+                        className={`p-2 rounded-[10px] w-full flex-grow outline-none text-black`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
-              <CustomInput
+              <FormField
                 control={form.control}
-                label="Password"
                 name="password"
-                placeholder="Enter your password"
-                className=""
+                render={({ field }) => (
+                  <FormItem className="w-full flex-grow space-y-2">
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your password"
+                        {...field}
+                        className={`p-2 rounded-[10px] w-full flex-grow outline-none text-black`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </main>
           ) : (
             <main className="space-y-8">
-              <CustomInput
+              <FormField
                 control={form.control}
-                label="Username"
                 name="username"
-                placeholder="Enter your username"
-                className=""
+                render={({ field }) => (
+                  <FormItem className="w-full flex-grow space-y-2">
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your username"
+                        {...field}
+                        className={`p-2 rounded-[10px] w-full flex-grow outline-none text-black`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
-              <CustomInput
+              <FormField
                 control={form.control}
-                label="Password"
                 name="password"
-                placeholder="Enter your password"
-                className=""
+                render={({ field }) => (
+                  <FormItem className="w-full flex-grow space-y-2">
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your password"
+                        {...field}
+                        className={`p-2 rounded-[10px] w-full flex-grow outline-none text-black`}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </main>
           )}

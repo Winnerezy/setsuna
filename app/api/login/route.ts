@@ -10,20 +10,30 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       const user = await User.findOne({ username });
       
       if(!user){
-        return Response.json({ message: "No User Found" })
+        return new NextResponse(JSON.stringify({ message: "No User Found" }), {
+          status: 404,
+        });
       }
 
       const match = await bcrypt.compare(password, user.password);
 
       if (!match) {
-        return Response.json({
-          message: "Incorrect username and password combination",
+        return new NextResponse(JSON.stringify({ message: "Incorrect username and password combination" }), {
+          status: 404,
         });
       }
 
-      return Response.json(user.authToken);
-    } catch (error) {
-      return Response.json({ message: error.message });
+     return new NextResponse(user.authToken)
+     } catch (error) {
+
+      return new NextResponse(
+        JSON.stringify({
+          message: error.message,
+        }),
+        {
+          status: 500,
+        }
+      );
     }
   }
 };

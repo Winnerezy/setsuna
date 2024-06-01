@@ -10,7 +10,14 @@ export const POST = async(req: NextRequest, res: Response) => {
         const saltRounds = 10
         const existingUser = await User.findOne({ $or:[{ email: userData.email }, { username: userData.username }]})
         if(existingUser){
-            return Response.json({ message: "User already registered with this credencials" })
+            return new NextResponse(
+              JSON.stringify({
+                message: "User already registered with this credencials",
+              }),
+              {
+                status: 400,
+              }
+            );
         }
         const payload = JSON.stringify(Math.ceil(Math.random() * 1000 + 1))
 
@@ -25,9 +32,16 @@ export const POST = async(req: NextRequest, res: Response) => {
             password: hashPassword,
             authToken: token
          });
-        return Response.json(user.authToken);
+        return new NextResponse(JSON.stringify(user.authToken));
     } catch (error) {
-        return Response.json({ message: error.message });
+        return new NextResponse(
+          JSON.stringify({
+            message: error.message,
+          }),
+          {
+            status: 404,
+          }
+        );
     }
 
 }
