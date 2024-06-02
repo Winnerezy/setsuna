@@ -12,12 +12,6 @@ export const POST = async(req: NextRequest) => {
             const authToken = headers().get('authorization').split(' ')[1]
 
             const { content, photo } = await req.json()
-
-            //  const uploadedImageResponse = await cloudinary.uploader.upload(
-            //    photo,
-            //    "setsuna",
-            //    { resource_type: "image" }
-            //  );
             const user = await User.findOne({ authToken: authToken })
             if(!user){
                 return new NextResponse(JSON.stringify({ message: "No user found" }), {
@@ -26,7 +20,8 @@ export const POST = async(req: NextRequest) => {
             }
             const post = await Post.create({
                 author: user.username,
-                content
+                content, 
+                photo: photo
             })
             return new NextResponse(JSON.stringify({
                 message: "Post Created",

@@ -1,10 +1,12 @@
 :root{
     --global-bg: #0A0A0A;
+    --global-loader-bg: #282828;
     --global-input-text: #0A0A0A;
     --global-primary-text: #ffffff;
     --global-secondary-text: rgba(168, 81, 255, 0.8);
     --global-tetiary-text: rgba(209, 163, 255, 0.9);
     --global-border-bg: rgba(191, 128, 255, 0.9);
     --global-button-bg: rgba(172, 88, 255);
-    --global-sidebar-bg: #272727
+    --global-sidebar-bg: #272727;
+    --global-like-button: #ffffff;
 }

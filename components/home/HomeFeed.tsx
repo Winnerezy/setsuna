@@ -1,28 +1,85 @@
-import { MessageCircle, MessageCircleX, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import axios from "axios";
+import { BookmarkIcon, MessageCircle, MessageCircleX, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
-export const HomeFeed = ({ content, author }: { content: string, author: string }) => {
+export const HomeFeed = ({ content, author, photo, id }: PostCard) => {
+
+  const [likes, setLikes] = useState<string[]>([])
+  const [dislikes, setDislikes] = useState<string[]>([]);
+
+  useEffect(()=> {
+    async function fetchPost(){
+      const res = await axios.get(`/api/user-post/${id}`, {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+      })
+      const { likes, dislikes } =  res.data
+      setLikes(likes)
+      setDislikes(dislikes)
+    }
+    fetchPost()
+  }, [])
+
+  const handleLike = async() => {
+    await axios.put(`/api/like-post/${id}`, null, {
+      headers: {
+        Accept: "application/json",
+        authorization: `Bearer ${localStorage.getItem('authToken')}`
+      }
+    })
+    
+  }
+
+    const handleDislike = async () => {
+      await axios.put(`/api/dislike-post/${id}`, null, {
+        headers: {
+          Accept: "application/json",
+          authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+      });
+    };
   return (
     <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-tetiary-text)] border-2 rounded-[20px] items-center space-y-4">
-      <section className="flex flex-col md:flex-row w-full gap-2 self-start">
-        <div className="size-12 rounded-full bg-white"></div>
-        <p className="p-2 max-w-[400px] flex-grow text-xs sm:text-[16px] font-light tracking-wide">
-          {content}
-        </p>
+      <section className="flex  w-full sm:gap-x-6 gap-x-4 self-start">
+        <div className="size-10 sm:size-12 rounded-full bg-white"></div>
+        <div className="flex flex-col size-[90%]">
+          <img
+            src={photo}
+            className={`flex-grow self-start size-full  ${
+              photo ? "flex" : "hidden"
+            }`}
+          />
+          <p className="p-2 max-w-[400px] flex-grow text-sm sm:text-[16px] font-light tracking-wide">
+            {content}
+          </p>
+        </div>
       </section>
 
       <section className="flex flex-col w-full gap-y-2">
         <hr className="border-b-[#e4e4e4] border w-full" />
         <div className="flex w-full pr-2 items-center justify-between">
           <div className="flex gap-x-4 items-center">
-            <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
-            <div className="flex gap-x-4">
-              <ThumbsUpIcon className="size-5" />
-              <ThumbsDownIcon className="size-5" />
+            <Link
+              className="font-semibold"
+              href={`/profile/${author}`}
+            >{`@${author}`}</Link>
+            <div className="flex gap-x-4 text-sm">
+              <article className="flex flex-col py-[5px]">
+                <ThumbsUpIcon className="size-5" onClick={handleLike} />
+                <p>{likes.length} Likes</p>
+              </article>
+              <article className="flex flex-col py-[5px]">
+                <ThumbsDownIcon className="size-5" onClick={handleDislike} />
+                <p>{dislikes.length} Dislikes</p>
+              </article>
             </div>
           </div>
-
-          <MessageCircle className="size-5" />
+          <div className="flex gap-x-4">
+            <MessageCircle className="size-5" />
+            <BookmarkIcon className="size-5" />
+          </div>
         </div>
       </section>
     </article>

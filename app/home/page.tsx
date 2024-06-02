@@ -8,13 +8,14 @@ import { HomeFeed } from "../../components/home/HomeFeed";
 import { useFetchFeed } from "../../hooks/useFetchFeed";
 import { ImageIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import Image from "next/image";
+import { PostSkeleton } from "../../components/ui/PostSkeleton";
+
 export default function Home() {
   const [content, setContent] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const contentRef = useRef(null);
   const [photo, setPhoto] = useState(null);
-  const { posts, refetch } = useFetchFeed();
+  const { posts, refetch, isLoading } = useFetchFeed();
 
   const handleInput = () => {
     setContent(contentRef.current.value);
@@ -37,7 +38,7 @@ export default function Home() {
 
   const handlePost = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       const options = {
         accept: "application/json",
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -54,10 +55,11 @@ export default function Home() {
 
       refetch();
       setContent("");
+      setPhoto(null)
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -70,8 +72,10 @@ export default function Home() {
             <div className="size-12 rounded-full bg-white object-none"></div>
             <div className="flex flex-col size-fit">
               <img
-                src={photo ? photo : ""}
-                className="size-full flex-grow self-start"
+                src={photo}
+                className={`${
+                  photo ? "flex" : "hidden"
+                } size-full flex-grow self-start`}
               />
               <TextareaAutosize
                 className="bg-transparent outline-none p-2 max-w-[400px] flex-grow resize-none"
@@ -87,14 +91,14 @@ export default function Home() {
             <hr className="border-b-[#e4e4e4] border w-full" />
             <div className="w-full flex items-center justify-between px-2">
               <div {...getRootProps()}>
-                <input {...getInputProps()} />
+                <input {...getInputProps()} accept="image/*" />
                 <ImageIcon className="size-5 hover:opacity-80" />
               </div>
 
               <button
                 className="border-[var(--global-border-bg)] border rounded-[20px] hover:opacity-80 disabled:opacity-70 disabled:text-[#e4e4e4] text-center p-1 w-16 h-8 font-semibold text-sm self-end"
                 onClick={handlePost}
-                disabled={isLoading}
+                disabled={loading}
               >
                 Post
               </button>
@@ -103,9 +107,17 @@ export default function Home() {
         </article>
       </div>
       <section className="w-full flex flex-col items-center justify-center gap-y-8 p-5">
-        {posts.map((post, index) => (
-          <HomeFeed content={post.content} author={post.author} key={index} />
-        ))}
+        {isLoading
+          ? Array(3).fill(null).map((_, index) => <PostSkeleton key={index}/>)
+          : posts.map((post, index) => (
+              <HomeFeed
+                content={post.content}
+                author={post.author}
+                photo={post.photo}
+                id={post._id}
+                key={index}
+              />
+            ))}
       </section>
     </main>
   );

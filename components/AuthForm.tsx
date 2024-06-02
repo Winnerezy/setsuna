@@ -22,7 +22,7 @@ import { Input } from "../@/components/ui/input";
 
 export default function AuthForm({ type }: { type: string }) {
   const [user, setUser] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   const formSchema = authFormSchema(type);
@@ -33,6 +33,7 @@ export default function AuthForm({ type }: { type: string }) {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     if (type === "sign-in") {
         try {
+          setIsLoading(true)
                   const body = {
                     username: data.username,
                     password: data.password,
@@ -43,24 +44,29 @@ export default function AuthForm({ type }: { type: string }) {
                  router.push("/home");
         } catch (error) {
             console.error({ message: error.message })
+        } finally {
+          setIsLoading(false)
         }
 
     } 
     if(type === 'sign-up'){
          try {
-            const body = {
-                firstname: data.firstname,
-                lastname: data.lastname,
-                username: data.username,
-                email: data.email,
-                password: data.password
-            };
+          setIsLoading(true)
+           const body = {
+             firstname: data.firstname,
+             lastname: data.lastname,
+             username: data.username,
+             email: data.email,
+             password: data.password,
+           };
            const res = await axios.post("/api/register", body);
            const authToken = res.data;
            localStorage.setItem("authToken", authToken);
-           router.push('/home')
+           router.push("/home");
          } catch (error) {
            console.error({ message: error.message });
+         } finally {
+           setIsLoading(false);
          }
     }
   }
@@ -215,7 +221,7 @@ export default function AuthForm({ type }: { type: string }) {
             </main>
           )}
 
-          <CustomButton type={type} />
+          <CustomButton type={type} isLoading={isLoading} />
         </form>
       </Form>
       <p>

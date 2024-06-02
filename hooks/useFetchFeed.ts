@@ -24,13 +24,11 @@ const fetchFeed = useCallback(async () => {
   }
 }, []);
 
-console.log(posts)
-
 useEffect(() => {
   fetchFeed();
 }, []);
 
-const refetch = () => {
+const refetch = () => {  // refetching the posts when needed
     fetchFeed()
     
 }
