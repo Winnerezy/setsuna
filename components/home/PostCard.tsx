@@ -1,44 +1,51 @@
 import axios from "axios";
 import { BookmarkIcon, MessageCircle, MessageCircleX, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const HomeFeed = ({ content, author, photo, id }: PostCard) => {
 
   const [likes, setLikes] = useState<string[]>([])
   const [dislikes, setDislikes] = useState<string[]>([]);
 
+
+  const fetchPost = useCallback( async() => {
+    const res = await axios.get(`/api/user-post/${id}`, {
+      headers: {
+        authorization: `Bearer ${localStorage.getItem('authToken')}`
+      }
+    })
+    const { likes, dislikes } =  res.data
+    setLikes(likes)
+    setDislikes(dislikes)
+  }, [id])
+
   useEffect(()=> {
-    async function fetchPost(){
-      const res = await axios.get(`/api/user-post/${id}`, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem('authToken')}`
-        }
-      })
-      const { likes, dislikes } =  res.data
-      setLikes(likes)
-      setDislikes(dislikes)
-    }
     fetchPost()
   }, [])
 
+  const refetch = () => {
+    fetchPost()
+  }
+
   const handleLike = async() => {
-    await axios.put(`/api/like-post/${id}`, null, {
+    await axios.put(`/api/post/like-post/${id}`, null, {
       headers: {
         Accept: "application/json",
         authorization: `Bearer ${localStorage.getItem('authToken')}`
       }
     })
-    
+    refetch()
   }
 
     const handleDislike = async () => {
-      await axios.put(`/api/dislike-post/${id}`, null, {
+      await axios.put(`/api/post/dislike-post/${id}`, null, {
         headers: {
           Accept: "application/json",
           authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       });
+      refetch()
     };
   return (
     <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-tetiary-text)] border-2 rounded-[20px] items-center space-y-4">
@@ -68,11 +75,11 @@ export const HomeFeed = ({ content, author, photo, id }: PostCard) => {
             <div className="flex gap-x-4 text-sm">
               <article className="flex flex-col py-[5px]">
                 <ThumbsUpIcon className="size-5" onClick={handleLike} />
-                <p>{likes.length} Likes</p>
+                <p>{`${likes.length} ${likes.length === 1 ? "Like" : "Likes"}`}</p>
               </article>
               <article className="flex flex-col py-[5px]">
                 <ThumbsDownIcon className="size-5" onClick={handleDislike} />
-                <p>{dislikes.length} Dislikes</p>
+                <p>{`${dislikes.length} ${dislikes.length === 1 ? "Dislike" : "Dislikes"}`}</p>
               </article>
             </div>
           </div>

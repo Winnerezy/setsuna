@@ -5,11 +5,10 @@ import { PostContext } from "../context/PostContext";
 export const useFetchFeed = () => {
 const { posts, setPosts } = useContext(PostContext)
 const [error, setError] = useState(null)
-const [isLoading, setIsLoading] = useState(false)
+const [isLoading, setIsLoading] = useState(true)
 
 const fetchFeed = useCallback(async () => {
   try {
-    setIsLoading(true)
     const options = {
       accept: "application/json",
       authorization: `Bearer ${localStorage.getItem("authToken")}`,

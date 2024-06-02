@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
-import Post from "../../../../lib/utils/schemas/PostSchema";
-import { mongodb } from "../../../../lib/utils/mongodb";
-import User from "../../../../lib/utils/schemas/UserSchema";
+import Post from "../../../../../lib/utils/schemas/PostSchema";
+import User from "../../../../../lib/utils/schemas/UserSchema";
+import { mongodb } from "../../../../../lib/utils/mongodb";
 
 export const PUT = async (req: NextRequest) => {
   if (req.method === "PUT") {
@@ -27,20 +27,24 @@ export const PUT = async (req: NextRequest) => {
 
       const post = await Post.findById(id);
 
-      if (post.likes.includes(user.username)) {
-        return new NextResponse(
-          JSON.stringify({ message: "Post already liked" }),
-          {
-            status: 200,
-          }
-        );
+      if (!post) {
+        return new NextResponse(JSON.stringify({ message: "Post not found" }), {
+          status: 404,
+        });
       }
 
-      await Post.findByIdAndUpdate(id, { $addToSet: { likes: user.username } });
+      await Post.findByIdAndUpdate(id, {
+        $push: { dislikes: user.username },
+      });
+
+
+      if (post.dislikes.includes(user.username)) {
+        await Post.findByIdAndUpdate(id, { $pull: { dislikes: user.username } })
+      }
 
       return new NextResponse(
         JSON.stringify({
-          message: "Like Successful",
+          message: "Dislike Successful",
         })
       );
     } catch (error) {

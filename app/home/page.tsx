@@ -4,19 +4,23 @@ import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Header } from "../../components/ui/Header";
 import { TextareaAutosize } from "@mui/base";
-import { HomeFeed } from "../../components/home/HomeFeed";
+import { HomeFeed } from "../../components/home/PostCard";
 import { useFetchFeed } from "../../hooks/useFetchFeed";
 import { ImageIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { PostSkeleton } from "../../components/ui/PostSkeleton";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const contentRef = useRef(null);
   const [photo, setPhoto] = useState(null);
-  const { posts, refetch, isLoading } = useFetchFeed();
+  const { posts, refetch, isLoading, error } = useFetchFeed();
+  const router = useRouter()
 
+
+  console.log(isLoading)
   const handleInput = () => {
     setContent(contentRef.current.value);
   };
@@ -61,6 +65,7 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
+
   };
 
   return (
@@ -109,14 +114,17 @@ export default function Home() {
       <section className="w-full flex flex-col items-center justify-center gap-y-8 p-5">
         {isLoading
           ? Array(3).fill(null).map((_, index) => <PostSkeleton key={index}/>)
-          : posts.map((post, index) => (
-              <HomeFeed
-                content={post.content}
-                author={post.author}
-                photo={post.photo}
-                id={post._id}
-                key={index}
-              />
+          : error ? 
+          <p>Error</p> 
+          :
+          posts.map((post, index) => (
+            <HomeFeed
+              content={post.content}
+              author={post.author}
+              photo={post.photo}
+              id={post._id}
+              key={index}
+            />
             ))}
       </section>
     </main>
