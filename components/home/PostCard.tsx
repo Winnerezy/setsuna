@@ -1,44 +1,26 @@
 "use client"
 
 import axios from "axios";
-import { BookmarkIcon, MessageCircle, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import { BookmarkIcon, HeartIcon, MessageCircle } from "lucide-react";
 import Link from "next/link";
-import { Skeleton } from "@mui/material";
 import { useState, useEffect } from "react";
+import userInfo from "../../hooks/UserInfo";
 
 export const PostCard = ({ post, updatePost }) => {
-  const { content, author, photo, _id, likes: initialLikes, dislikes: initialDislikes } = post;
+  const user = userInfo() // user data function
+  const { content, author, photo, _id, likes: initialLikes } = post;
   const [likes, setLikes] = useState(initialLikes);
-  const [dislikes, setDislikes] = useState(initialDislikes);
+  const [liked, setLiked] = useState(false);
 
   useEffect(() => {
+    setLiked(() => initialLikes.includes(user?.username))
     setLikes(initialLikes);
-    setDislikes(initialDislikes);
-  }, [initialLikes, initialDislikes]);
+  }, [initialLikes, user]);
 
   const handleLike = async () => {
     try {
+      setLiked(prev => !prev)
       await axios.put(`/api/post/like-post/${_id}`, null, {
-        headers: {
-          Accept: "application/json",
-          authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-      const res = await axios.get(`/api/user-post/${_id}`, {
-        headers: {
-          authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      });
-      const updatedPost = res.data;
-      updatePost(updatedPost);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDislike = async () => {
-    try {
-      await axios.put(`/api/post/dislike-post/${_id}`, null, {
         headers: {
           Accept: "application/json",
           authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -76,7 +58,7 @@ export const PostCard = ({ post, updatePost }) => {
           <section className="flex flex-col w-full gap-y-2">
               <div className="flex gap-x-4 text-md">
                 <article className="flex gap-x-[5px] items-center justify-center">
-                  <ThumbsUpIcon className="size-5" onClick={handleLike} />
+                  <HeartIcon className={`size-5 ${liked ? "text-red-600 fill-red-600" : ""}`} onClick={handleLike} />
                   <p>{likes.length}</p>
                 </article>
                 <article className="flex gap-x-[5px] items-center justify-center">

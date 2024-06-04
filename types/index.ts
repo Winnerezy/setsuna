@@ -20,8 +20,9 @@ declare type CustomButton = {
 };
 
 declare type User = {
-  firstname: string,
-  lastname: string,
-  username: string,
-  following: string[],
+  firstname: string;
+  lastname: string;
+  username: string;
+  following: string[];
+  profilephoto: string;
 }
