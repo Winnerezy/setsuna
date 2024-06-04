@@ -1,3 +1,5 @@
+'use client'
+
 import { BookMarkedIcon, HomeIcon, LucideOctagon, MessageCirclePlusIcon, SearchIcon, Settings2Icon } from "lucide-react";
 import Link from "next/link";
 
