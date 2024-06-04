@@ -1,4 +1,6 @@
+import BottomeBar from "../../components/BottomBar";
 import SideBar from "../../components/SideBar";
+import { Header } from "../../components/ui/Header";
 import { PostProvider } from "../../context/PostContext";
 
 export const metadata = {
@@ -15,10 +17,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <PostProvider>
-          <main className="flex w-full min-h-screen">
-            {/* <SideBar/> */}
-            {children}
-          </main>
+          <SideBar/>
+          <main className="flex flex-col">
+          {children}
+          <BottomeBar/>
+          </main>   
+
         </PostProvider>
       </body>
     </html>

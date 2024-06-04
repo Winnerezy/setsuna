@@ -1,10 +1,10 @@
-"use client";
+"use client"
 
 import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Header } from "../../components/ui/Header";
 import { TextareaAutosize } from "@mui/base";
-import { HomeFeed } from "../../components/home/PostCard";
+import { PostCard } from "../../components/home/PostCard";
 import { useFetchFeed } from "../../hooks/useFetchFeed";
 import { ImageIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
@@ -16,11 +16,15 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const contentRef = useRef(null);
   const [photo, setPhoto] = useState(null);
-  const { posts, refetch, isLoading, error } = useFetchFeed();
-  const router = useRouter()
+  const { posts: initialPosts, refetch, isLoading, error } = useFetchFeed();
+  const [posts, setPosts] = useState([]);
 
+  useEffect(() => {
+    if (initialPosts) {
+      setPosts(initialPosts);
+    }
+  }, [initialPosts]);
 
-  console.log(isLoading)
   const handleInput = () => {
     setContent(contentRef.current.value);
   };
@@ -59,20 +63,26 @@ export default function Home() {
 
       refetch();
       setContent("");
-      setPhoto(null)
+      setPhoto(null);
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
+  };
 
+  const updatePost = (updatedPost: Post) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post._id === updatedPost._id ? updatedPost : post
+      )
+    );
   };
 
   return (
     <main className="relative flex flex-col w-full h-full items-center justify-center">
-      <Header />
       <div className="w-full h-full p-5 flex justify-center">
-        <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-tetiary-text)] border-2 rounded-[20px] items-center space-y-4">
+        <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border rounded-[20px] items-center space-y-4">
           <section className="flex w-full space-x-4">
             <div className="size-12 rounded-full bg-white object-none"></div>
             <div className="flex flex-col size-fit">
@@ -111,20 +121,19 @@ export default function Home() {
           </section>
         </article>
       </div>
-      <section className="w-full flex flex-col items-center justify-center gap-y-8 p-5">
+      <section className="w-full flex flex-col items-center justify-center p-5">
         {isLoading
-          ? Array(3).fill(null).map((_, index) => <PostSkeleton key={index}/>)
-          : error ? 
-          <p>Error</p> 
-          :
-          posts.map((post, index) => (
-            <HomeFeed
-              content={post.content}
-              author={post.author}
-              photo={post.photo}
-              id={post._id}
-              key={index}
-            />
+          ? Array(3)
+              .fill(null)
+              .map((_, index) => <PostSkeleton key={index} />)
+          : error
+          ? <p>{error.message}</p>
+          : posts.map((post) => (
+              <PostCard
+                key={post._id}
+                post={post}
+                updatePost={updatePost}
+              />
             ))}
       </section>
     </main>

@@ -25,6 +25,7 @@ const fetchFeed = useCallback(async () => {
 
 useEffect(() => {
   fetchFeed();
+  return;
 }, []);
 
 const refetch = () => {  // refetching the posts when needed

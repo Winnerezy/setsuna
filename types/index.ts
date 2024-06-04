@@ -10,9 +10,18 @@ declare type PostCard = {
   author: string;
   photo: string | null;
   id: string;
+  likes: string[];
+  dislikes: string[];
 };
 
 declare type CustomButton = { 
     type: string,
     isLoading: boolean;
 };
+
+declare type User = {
+  firstname: string,
+  lastname: string,
+  username: string,
+  following: string[],
+}

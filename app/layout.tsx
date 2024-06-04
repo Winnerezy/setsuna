@@ -1,3 +1,5 @@
+import BottomeBar from "../components/BottomBar";
+import SideBar from "../components/SideBar";
 import "./globals.css";
 
 export const metadata = {
@@ -12,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }

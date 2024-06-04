@@ -9,13 +9,11 @@ export const GET = async(req: NextRequest, res: NextResponse) => {
     await mongodb()
     const authToken = headers().get('authorization').split(' ')[1];
     const user = await User.findOne({ authToken: authToken })
-    const posts = await Post.find({ author: user.username }).sort({ createdAt: -1 })
+    const posts = await Post.find({ $or : [ {author: user.username }, { author: user.following }]}).sort({ createdAt: -1 })
     return new NextResponse(JSON.stringify(posts), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    // Handle errors here
-    console.error(error);
     return new NextResponse(
       JSON.stringify({ error: "Internal Server Error" }),
       {
