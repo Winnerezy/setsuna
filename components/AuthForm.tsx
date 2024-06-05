@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,12 +19,12 @@ import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Input } from "../@/components/ui/input";
+import { AuthContext } from "../context/AuthContext";
 
 export default function AuthForm({ type }: { type: string }) {
-  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-
+  const { checkAuthUser, isLoading: isUserLoading } = useContext(AuthContext)
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,6 +71,16 @@ export default function AuthForm({ type }: { type: string }) {
     }
   }
 
+useEffect(()=> {
+  async function loggedIn(){
+    const isLoggedIn = await checkAuthUser()
+    if(isLoggedIn){
+      router.push('/home')
+    }
+  }
+  loggedIn()
+}, [])
+
   return (
     <section className="relative flex flex-col gap-1 w-[500px] min-h-[600px] items-center justify-center py-10">
       <header className="flex flex-col absolute top-8 left-2 gap-y-2">
@@ -78,7 +88,7 @@ export default function AuthForm({ type }: { type: string }) {
           Setsuna
         </p>
         <h1 className="font-bold text-2xl tracking-wide self-start">
-          {user ? "Link Account" : type === "sign-in" ? "Sign In" : "Sign Up"}
+          {type === "sign-in" ? "Sign In" : "Sign Up"}
         </h1>
         <p>Please enter your details below</p>
       </header>

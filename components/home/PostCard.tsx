@@ -3,46 +3,59 @@
 import axios from "axios";
 import { BookmarkIcon, HeartIcon, MessageCircle } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import userInfo from "../../hooks/UserInfo";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 export const PostCard = ({ post, updatePost }) => {
-  const user = userInfo() // user data function
-  const { content, author, photo, _id, likes: initialLikes } = post;
+  const { user } = useContext(AuthContext)// user data function
+  const { content, author, photo, _id, likes: initialLikes, comments } = post;
   const [likes, setLikes] = useState(initialLikes);
-  const [liked, setLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    setLiked(() => initialLikes.includes(user?.username))
-    setLikes(initialLikes);
-  }, [initialLikes, user]);
+  const router = useRouter()
 
   const handleLike = async () => {
     try {
-      setLiked(prev => !prev)
-      await axios.put(`/api/post/like-post/${_id}`, null, {
+      setIsLoading(true)
+      let newLikes = [...likes]
+
+      const hasLiked = newLikes.includes(user.username)
+
+      if(hasLiked){
+        newLikes = newLikes.filter(userId => userId !== user.username)
+      } else {
+        newLikes.push(user.username)
+      }
+      setLikes(newLikes)
+
+      await axios.put(`/api/post/like-post/${_id}`, { newLikes }, {
         headers: {
           Accept: "application/json",
           authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
+
       });
       const res = await axios.get(`/api/user-post/${_id}`, {
         headers: {
           authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
+        
       });
       const updatedPost = res.data;
       updatePost(updatedPost);
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false)
     }
   };
 
   return (
-    <article className="flex justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border items-center space-y-4">
+    <article className="flex justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border items-center space-y-4 cursor-pointer">
       <section className="flex w-full sm:gap-x-6 gap-4 self-start items-start justify-center">
         <section className="flex gap-x-6 items-center justify-start">
-          <div className="size-10 sm:size-12 rounded-full bg-white"></div>
+        <img src={user.profilephoto} className="size-[50px] rounded-full object-fill"/>
         </section>
 
         <div className="flex flex-col self-start size-[90%] gap-3">
@@ -58,11 +71,12 @@ export const PostCard = ({ post, updatePost }) => {
           <section className="flex flex-col w-full gap-y-2">
               <div className="flex gap-x-4 text-md">
                 <article className="flex gap-x-[5px] items-center justify-center">
-                  <HeartIcon className={`size-5 ${liked ? "text-red-600 fill-red-600" : ""}`} onClick={handleLike} />
+                 <button disabled={isLoading} className="z-40"><HeartIcon className={`size-5 ${likes.includes(user.username) ? "text-red-600 fill-red-600" : ""}`} onClick={handleLike} /></button> 
                   <p>{likes.length}</p>
                 </article>
                 <article className="flex gap-x-[5px] items-center justify-center">
-                <MessageCircle className="size-5" />
+                <MessageCircle className="size-5" onClick={() => router.push(`post/${_id}`)}/>
+                <p>{comments.length}</p>
                 </article>
                 <article className="flex gap-x-[5px] items-center justify-center">
                 <BookmarkIcon className="size-5" />

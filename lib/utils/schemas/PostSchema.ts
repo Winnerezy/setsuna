@@ -14,14 +14,14 @@ const PostSchema = new mongoose.Schema(
       type: String,
     },
     tags: {
-      type: Array,
+      type: [String],
       default: [],
     },
     likes: {
-      type: Array,
+      type: [String],
       default: [],
     },
-    dislikes: {
+    comments: {
       type: Array,
       default: [],
     },

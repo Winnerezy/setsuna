@@ -1,18 +1,11 @@
 declare type Post = {
   _id: string;
-  author: string;
-  photo: string;
-  content: string;
-}
-
-declare type PostCard = {
   content: string;
   author: string;
   photo: string | null;
-  id: string;
   likes: string[];
-  dislikes: string[];
-};
+  comments: IComment[];
+}
 
 declare type CustomButton = { 
     type: string,
@@ -25,4 +18,18 @@ declare type User = {
   username: string;
   following: string[];
   profilephoto: string;
+}
+
+declare type IContextType = {
+  user: User;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  checkAuthUser: () => Promise<boolean>;
+}
+
+declare type IComment = {
+  author: string,
+  comment: string
 }

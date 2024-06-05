@@ -14,7 +14,7 @@ export default function userInfo() {
                         authorization: `Bearer ${localStorage.getItem('authToken')}`
                     }
                 }
-                const res = await fetch('/api/profile', options)
+                const res = await fetch('/api/user', options)
                 const ans = await res.json()
                 setUser(ans)
             }

@@ -1,7 +1,7 @@
 "use client"
 
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Header } from "../../components/ui/Header";
 import { TextareaAutosize } from "@mui/base";
 import { PostCard } from "../../components/home/PostCard";
@@ -10,7 +10,7 @@ import { ImageIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import { PostSkeleton } from "../../components/ui/PostSkeleton";
 import { useRouter } from "next/navigation";
-import userInfo from "../../hooks/UserInfo";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function Home() {
   const [content, setContent] = useState("");
@@ -20,7 +20,7 @@ export default function Home() {
   const { posts: initialPosts, refetch, isLoading, error } = useFetchFeed();
   const [posts, setPosts] = useState([]);
 
-  const user = userInfo() // logged in user data
+  const { user } = useContext(AuthContext) // logged in user data
 
   useEffect(() => {
     if (initialPosts) {
@@ -87,7 +87,7 @@ export default function Home() {
       <div className="w-full h-full p-5 flex justify-center">
         <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border rounded-[20px] items-center space-y-4">
           <section className="flex w-full space-x-4">
-          <img src={user?.profilephoto} className="size-[50px] rounded-full"/>
+          <img src={user.profilephoto} className="size-[50px] rounded-full"/>
             <div className="flex flex-col size-fit">
               <img
                 src={photo}
@@ -124,7 +124,7 @@ export default function Home() {
           </section>
         </article>
       </div>
-      <section className="w-full flex flex-col items-center justify-center p-5">
+      <section className="w-full flex flex-col items-center justify-center p-5 mb-16 sm:mb-0">
         {isLoading
           ? Array(3)
               .fill(null)

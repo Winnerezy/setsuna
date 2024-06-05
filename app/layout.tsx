@@ -1,5 +1,6 @@
 import BottomeBar from "../components/BottomBar";
 import SideBar from "../components/SideBar";
+import { AuthProvider } from "../context/AuthContext";
 import "./globals.css";
 
 export const metadata = {
@@ -13,10 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
+        <AuthProvider>
         {children}
-      </body>
-    </html>
+        </AuthProvider>
   );
 }
