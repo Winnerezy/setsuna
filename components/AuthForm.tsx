@@ -25,6 +25,7 @@ export default function AuthForm({ type }: { type: string }) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { checkAuthUser, isLoading: isUserLoading } = useContext(AuthContext)
+  const [error, setError] = useState(null)
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,16 +35,23 @@ export default function AuthForm({ type }: { type: string }) {
     if (type === "sign-in") {
         try {
           setIsLoading(true)
-                  const body = {
-                    username: data.username,
-                    password: data.password,
+                  const options = {
+                    method: 'POST',
+                    body: JSON.stringify({
+                      username: data.username,
+                      password: data.password
+                    })
+                   
                   };
-                 const res = await axios.post("/api/login", body);
-                 const authToken = res.data
-                 localStorage.setItem('authToken', authToken)
-                 router.push("/home");
+                  const res = await fetch('api/login', options)
+                  const { message, authToken } = await res.json()
+                if(res.status === 200){
+                  localStorage.setItem('authToken', authToken)
+                  router.push("/home");
+                }
+                setError(message)
         } catch (error) {
-            console.error({ message: error.message })
+            setError(error.message )
         } finally {
           setIsLoading(false)
         }
@@ -228,6 +236,7 @@ export default function AuthForm({ type }: { type: string }) {
                   </FormItem>
                 )}
               />
+              <p className="text-red-600 text-sm text-center">{ error }</p>
             </main>
           )}
 

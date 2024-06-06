@@ -3,7 +3,7 @@
 import axios from "axios";
 import { ArrowBigLeftIcon, BookmarkIcon, HeartIcon, MessageCircle } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext, useRef, useCallback } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { useParams } from "next/navigation";
 import { PostSkeleton } from "../../../components/ui/PostSkeleton";
@@ -19,6 +19,11 @@ const INITIAL_POST = { // initial post data instead of making the post nullable
     comments: []
 }
 
+const INITIAL_COMMENT = {
+  author: '',
+  comment: ''
+}
+
 export default function PostPage (){
    
   const [post, setPost] = useState<Post>(INITIAL_POST)
@@ -32,7 +37,8 @@ export default function PostPage (){
   const [likes, setLikes] = useState<string[]>(initialLikes);
   const [isLoading, setIsLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
-  const commentRef = useRef(null)
+  const commentRef = useRef<HTMLInputElement>(null)
+  const [commentList, setCommentList] = useState<IComment[]>([])
   
   const router = useRouter()
 
@@ -45,6 +51,7 @@ export default function PostPage (){
         const ans =  await res.json()
         setPost(ans)  
         setLikes(ans.likes)
+        setCommentList(ans.comments)
     } catch (error) {
         console.error(error)
     } finally {
@@ -108,13 +115,29 @@ export default function PostPage (){
             throw new Error("Error found");
           }
         setComment('')
-        
+        if(commentRef.current){
+          commentRef.current.value = ''
+        }
+        refetchComments()
     } catch (error) {
         console.error(error)
     } finally {
         setCommentLoading(false)
     }
   }
+
+  const refetchComments = useCallback(async() => {
+    try {
+      const res = await fetch(`/api/post/comment/${postId}`, {
+        method: 'GET'
+      })
+      const ans = await res.json()
+      setCommentList(ans)
+    } catch (error) {
+      console.error(error)
+    }
+  }, []) 
+
   return (
 
     <main className="w-full relative flex flex-col items-center justify-center mt-6 px-4">
@@ -140,13 +163,13 @@ export default function PostPage (){
   
             <section className="flex flex-col w-full gap-y-2">
                 <div className="flex gap-x-4 text-md">
-                  <article className="flex gap-x-[5px] items-center justify-center">
-                   <button disabled={isLoading}><HeartIcon className={`size-5 ${likes.includes(user._id) ? "text-red-600 fill-red-600" : ""}`} onClick={handleLike} /></button> 
-                    <p>{likes.length}</p>
-                  </article>
+                <article className={`flex gap-x-[5px] items-center justify-center ${likes.includes(user._id) ? "text-[var(--global-like-button)]" : ""}`}>
+                 <button disabled={isLoading} className="z-40"><HeartIcon className={`size-5 ${likes.includes(user._id) ? "fill-[var(--global-like-button)] likebtn" : ""}`} onClick={handleLike} /></button> 
+                  <p>{likes.length}</p>
+                </article>
                   <article className="flex gap-x-[5px] items-center justify-center">
                   <MessageCircle className="size-5" />
-                  <p>{comments.length}</p>
+                  <p>{commentList.length}</p>
                   </article>
                   <article className="flex gap-x-[5px] items-center justify-center">
                   <BookmarkIcon className="size-5" />
@@ -163,7 +186,7 @@ export default function PostPage (){
                 <button disabled={commentLoading} className="w-24 h-10 p-2 rounded-[20px] border border-[var(--global-border)] self-end" onClick={handlePost}>Post</button> 
             </div>
             <div>
-                { comments.map((comment) => (
+                { commentList.map((comment) => (
                     <div className="w-full h-14 flex items-center justify-between p-2 bg-[var(--global-post-bg)] border border-t-[var(--global-border-bg)] border-b-0 border-l-0 border-r-0" key={comment.comment}>
                         <article className="flex gap-2">
                         <p>@{ comment.author }</p>

@@ -18,12 +18,12 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
       const match = await bcrypt.compare(password, user.password);
 
       if (!match) {
-        return new NextResponse(JSON.stringify({ message: "Incorrect username and password combination" }), {
-          status: 404,
+        return new NextResponse(JSON.stringify({ message: "Incorrect username and password combination." }), {
+          status: 400,
         });
       }
 
-     return new NextResponse(user.authToken)
+     return new NextResponse(JSON.stringify({ authToken: user.authToken }))
      } catch (error) {
 
       return new NextResponse(

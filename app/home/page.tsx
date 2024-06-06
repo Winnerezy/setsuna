@@ -88,7 +88,9 @@ export default function Home() {
       <div className="w-full h-full p-5 flex justify-center">
         <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border rounded-[20px] items-center space-y-4">
           <section className="flex w-full space-x-4">
-          <img src={user.profilephoto} className="size-[50px] rounded-full"/>
+            <section className="flex gap-x-6 items-start justify-start h-full size-[60px]">
+              <img src={user.profilephoto} className="size-[50px] rounded-full object-fill"/>
+            </section>
             <div className="flex flex-col size-fit">
               <img
                 src={photo}
