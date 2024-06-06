@@ -8,16 +8,7 @@ import { AuthContext } from "../../../context/AuthContext";
 import { useParams } from "next/navigation";
 import { PostSkeleton } from "../../../components/ui/PostSkeleton";
 import { useRouter } from "next/navigation";
- 
-const INITIAL_POST = { // initial post data instead of making the post nullable
-    _id: '',
-    author: '',
-    photo: '',
-    content: '',
-    likes: [],
-    tags: [] ,
-    comments: []
-}
+import { INITIAL_POST } from "../../../lib/utils/initial";
 
 const INITIAL_COMMENT = {
   author: '',
@@ -155,7 +146,7 @@ export default function PostPage (){
             <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
             <img
               src={photo}
-              className={`flex-grow self-start size-full rounded-[30px] ${photo ? "flex" : "hidden"}`}
+              className={`flex-grow self-start size-[40%] rounded-[30px] ${photo ? "flex" : "hidden"}`}
             />
             <p className="py-2 max-w-[400px] flex-grow text-sm sm:text-[16px] font-light tracking-wide">
               {content}

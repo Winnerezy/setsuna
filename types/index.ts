@@ -4,6 +4,7 @@ declare type Post = {
   author: string;
   photo: string | null;
   likes: string[];
+  tags: string[];
   comments: IComment[];
 }
 

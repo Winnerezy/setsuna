@@ -62,7 +62,7 @@ export const PostCard = ({ post, updatePost }) => {
           <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
           <img
             src={photo}
-            className={`flex-grow size-[60%] self-start rounded-[30px] ${photo ? "flex" : "hidden"}`}
+            className={`flex-grow size-[80%] self-start rounded-[30px] ${photo ? "flex" : "hidden"}`}
           />
           <p className="py-2 max-w-[400px] flex-grow text-sm sm:text-[16px] font-light tracking-wide">
             {content}
