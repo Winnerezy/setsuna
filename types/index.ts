@@ -13,6 +13,7 @@ declare type CustomButton = {
 };
 
 declare type User = {
+  _id: string;
   firstname: string;
   lastname: string;
   username: string;

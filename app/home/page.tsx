@@ -56,6 +56,7 @@ export default function Home() {
       };
 
       const body = {
+        userId: user._id,
         content: content,
         photo: photo,
       };

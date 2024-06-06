@@ -19,6 +19,7 @@ export const POST = async(req: NextRequest) => {
                 })
             }
             const post = await Post.create({
+                userId: user._id,
                 author: user.username,
                 content, 
                 photo: photo

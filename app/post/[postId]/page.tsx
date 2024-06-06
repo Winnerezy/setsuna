@@ -60,12 +60,12 @@ export default function PostPage (){
       setIsLoading(true)
       let newLikes = [...likes]
 
-      const hasLiked = newLikes.includes(user.username)
+      const hasLiked = newLikes.includes(user._id)
 
       if(hasLiked){
-        newLikes = newLikes.filter(userId => userId !== user.username)
+        newLikes = newLikes.filter(userId => userId !== user._id)
       } else {
-        newLikes.push(user.username)
+        newLikes.push(user._id)
       }
       setLikes(newLikes)
 
@@ -141,7 +141,7 @@ export default function PostPage (){
             <section className="flex flex-col w-full gap-y-2">
                 <div className="flex gap-x-4 text-md">
                   <article className="flex gap-x-[5px] items-center justify-center">
-                   <button disabled={isLoading}><HeartIcon className={`size-5 ${likes.includes(user.username) ? "text-red-600 fill-red-600" : ""}`} onClick={handleLike} /></button> 
+                   <button disabled={isLoading}><HeartIcon className={`size-5 ${likes.includes(user._id) ? "text-red-600 fill-red-600" : ""}`} onClick={handleLike} /></button> 
                     <p>{likes.length}</p>
                   </article>
                   <article className="flex gap-x-[5px] items-center justify-center">

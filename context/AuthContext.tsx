@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import React, { createContext, useEffect, useState } from 'react'
 
 const INITIAL_USER = {
+    _id: '',
     firstname: '',
     lastname: '',
     username: '',

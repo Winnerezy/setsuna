@@ -71,15 +71,15 @@ export default function AuthForm({ type }: { type: string }) {
     }
   }
 
-useEffect(()=> {
-  async function loggedIn(){
-    const isLoggedIn = await checkAuthUser()
-    if(isLoggedIn){
-      router.push('/home')
-    }
-  }
-  loggedIn()
-}, [])
+// useEffect(()=> {
+//   async function loggedIn(){
+//     const isLoggedIn = await checkAuthUser()
+//     if(isLoggedIn){
+//       router.push('/home')
+//     }
+//   }
+//   loggedIn()
+// }, [])
 
   return (
     <section className="relative flex flex-col gap-1 w-[500px] min-h-[600px] items-center justify-center py-10">
