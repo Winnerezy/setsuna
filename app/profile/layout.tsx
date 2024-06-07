@@ -16,12 +16,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
       <PostProvider>
+          <div className="flex w-full">
           <SideBar/>
-          <main className="flex flex-col">
+          <main className="flex flex-col w-full">
           {children}
           <BottomeBar/>
           </main>   
-
+          </div>
         </PostProvider>
       </body>
     </html>

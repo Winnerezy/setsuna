@@ -7,3 +7,14 @@ export const INITIAL_POST = { // initial post data instead of making the post nu
     tags: [] ,
     comments: []
 }
+
+export const INITIAL_USER = {
+    _id: '',
+    firstname: '',
+    lastname: '',
+    username: '',
+    followers: [''],
+    following: [''],
+    profilephoto: '',
+    headerphoto: '',
+}

@@ -9,10 +9,14 @@ export const GET = async(req: NextRequest, { params }: { params: { username: str
     await mongodb()
     const { username } = params
     const user = await User.findOne({ username })
-    const posts = await Post.find({userId: user._id }).sort({ createdAt: -1 })
 
-    await Post.updateMany({ _id: { $in: posts.map(post => post._id) }}, { author: user.username  })
-    return new NextResponse(JSON.stringify(posts), {
+    const userPosts = await Post.find({userId: user._id }).sort({ createdAt: -1 })
+    for(let userPost of userPosts){
+      if(userPost.author !== user.username){ 
+        await Post.updateOne({ userId: userPost.userId }, { author: user.username }) // updating the user's username in posts if ever changed
+      }
+    }
+    return new NextResponse(JSON.stringify(userPosts), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {

@@ -1,7 +1,7 @@
 "use client"
 
 import axios from "axios";
-import { BookmarkIcon, HeartIcon, MessageCircle, ShareIcon } from "lucide-react";
+import { BookmarkIcon, HeartIcon, MessageCircle, MoreVerticalIcon, ShareIcon } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
@@ -12,8 +12,23 @@ export const PostCard = ({ post, updatePost }) => {
   const { content, author, photo, _id, likes: initialLikes, comments } = post;
   const [likes, setLikes] = useState(initialLikes);
   const [isLoading, setIsLoading] = useState(false);
+  const [profilephoto, setProfilePhoto] = useState<string | null>(null)
 
   const router = useRouter()
+
+  useEffect(()=> {
+    const profileImage = async() => {
+      const res = await fetch(`/api/profile/${author}`, {
+        method: 'GET',
+        headers: {
+          authorization: `Bearer ${localStorage.getItem('authToken')}`
+        }
+      })
+      const { profilephoto } = await res.json()
+      setProfilePhoto(profilephoto)
+    }
+    profileImage()
+  }, [])
 
   const handleLike = async () => {
     try {
@@ -52,17 +67,18 @@ export const PostCard = ({ post, updatePost }) => {
   };
 
   return (
-    <article className="flex justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border items-center space-y-4 cursor-pointer">
+    <article className="relative flex max-h-[450px] justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border items-center space-y-4 cursor-pointer">
       <section className="flex w-full sm:gap-x-6 gap-4 self-start items-start justify-center">
         <section className="flex gap-x-6 items-center justify-start h-full size-[60px]">
-        <img src={user.profilephoto} className="size-[50px] rounded-full object-fill"/>
+        <img src={ profilephoto } className="size-[50px] rounded-full object-fill"/>
+        <MoreVerticalIcon className="size-6 absolute right-2 top-2 hover:bg-[var(--global-border-bg)] rounded-full"/>
         </section>
 
         <div className="flex flex-col self-start size-[90%] gap-3">
           <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
           <img
             src={photo}
-            className={`flex-grow size-[80%] self-start rounded-[30px] ${photo ? "flex" : "hidden"}`}
+            className={`flex-grow size-full max-h-[500px] self-start rounded-[20px] object-contain ${photo ? "flex" : "hidden"}`}
           />
           <p className="py-2 max-w-[400px] flex-grow text-sm sm:text-[16px] font-light tracking-wide">
             {content}

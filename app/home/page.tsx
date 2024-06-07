@@ -2,7 +2,6 @@
 
 import axios from "axios";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Header } from "../../components/ui/Header";
 import { TextareaAutosize } from "@mui/base";
 import { PostCard } from "../../components/home/PostCard";
 import { useFetchFeed } from "../../hooks/useFetchFeed";
@@ -18,10 +17,17 @@ export default function Home() {
   const contentRef = useRef(null);
   const [photo, setPhoto] = useState(null);
   const { posts: initialPosts, refetch, isLoading, error } = useFetchFeed();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   const { user } = useContext(AuthContext) // logged in user data
 
+  const router = useRouter()
+
+  useEffect(()=> {
+    if(!localStorage.getItem('authToken')){
+      router.push('/sign-in')
+    }
+  }, [])
   useEffect(() => {
     if (initialPosts) {
       setPosts(initialPosts);
@@ -75,6 +81,8 @@ export default function Home() {
     }
   };
 
+  console.log(posts)
+
   const updatePost = (updatedPost: Post) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
@@ -85,27 +93,29 @@ export default function Home() {
 
   return (
     <main className="relative flex flex-col w-full h-full items-center justify-center">
-      <div className="w-full h-full p-5 flex justify-center">
+      <div className="size-full p-5 flex flex-col items-center justify-center">
         <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border rounded-[20px] items-center space-y-4">
-          <section className="flex w-full space-x-4">
+          <section className="relative flex w-full space-x-4">
             <section className="flex gap-x-6 items-start justify-start h-full size-[60px]">
-              <img src={user.profilephoto} className="size-[50px] rounded-full object-fill"/>
+              <img src={user.profilephoto} className="size-[50px] rounded-full object-fill cursor-pointer" onClick={() => router.push(`/profile/${user.username}`)}/>
             </section>
-            <div className="flex flex-col size-fit">
+            <div className="flex flex-col size-full">
               <img
                 src={photo}
                 className={`${
                   photo ? "flex" : "hidden"
-                } size-full flex-grow self-start`}
+                } size-full max-h-[500px] flex-grow self-start rounded-[20px]`}
               />
               <TextareaAutosize
-                className="bg-transparent outline-none p-2 max-w-[400px] flex-grow resize-none"
+                className="bg-transparent outline-none p-2 w-full max-w-[600px] flex-grow resize-none"
                 placeholder="Share your experience...."
                 value={content}
                 onChange={handleInput}
                 ref={contentRef}
+                maxLength= {300}
               />
             </div>
+            <p className="absolute right-0 -bottom-4 text-sm">{ content.length }/300</p>
           </section>
 
           <section className="flex flex-col w-full gap-y-2">
@@ -126,22 +136,26 @@ export default function Home() {
             </div>
           </section>
         </article>
-      </div>
-      <section className="w-full flex flex-col items-center justify-center p-5 mb-16 sm:mb-0">
+        <section className="size-full flex flex-col items-center justify-center py-5 mb-16 sm:mb-0">
         {isLoading
           ? Array(3)
               .fill(null)
               .map((_, index) => <PostSkeleton key={index} />)
           : error
           ? <p>{error.message}</p>
-          : posts.map((post) => (
-              <PostCard
-                key={post._id}
-                post={post}
-                updatePost={updatePost}
-              />
-            ))}
+          : posts.length !== 0 ? 
+          posts.map((post) => (
+            <PostCard
+              key={post._id}
+              post={post}
+              updatePost={updatePost}
+            />
+          ))
+          : 
+          <p className="text-3xl font-semibold tracking-wide">Share your experience today!</p>
+          }
       </section>
+      </div>
     </main>
   );
 }

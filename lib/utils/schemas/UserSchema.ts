@@ -24,11 +24,11 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
     followers: {
-      type: Array,
+      type: [mongoose.Types.ObjectId],
       default: [],
     },
     following: {
-      type: Array,
+      type: [mongoose.Types.ObjectId],
       default: [],
     },
     authToken: {

@@ -2,15 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import React, { createContext, useEffect, useState } from 'react'
-
-export const INITIAL_USER = {
-    _id: '',
-    firstname: '',
-    lastname: '',
-    username: '',
-    following:  [],
-    profilephoto: '',
-}
+import { INITIAL_USER } from '../lib/utils/initial';
 
 const INITIAL_STATE = {
     user: INITIAL_USER,

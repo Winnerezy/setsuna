@@ -13,8 +13,8 @@ export default function Search() {
     }
   }
   return (
-    <main className="flex flex-col items-center justify-center">
-      <input type='search' ref={searchRef} onChange={handleSearch} className="w-1/2 p-2 h-8 rounded-[20px]"/>
+    <main className="flex flex-col w-full min-h-screen mt-8 p-4 items-center">
+      <input type='search' ref={searchRef} onChange={handleSearch} className="flex-grow w-full max-w-[700px] p-2 max-h-10 rounded-[20px] outline-none" placeholder="Find your entertainment..."/>
     </main>
   )
 }

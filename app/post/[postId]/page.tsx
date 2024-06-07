@@ -131,22 +131,23 @@ export default function PostPage (){
 
   return (
 
-    <main className="w-full relative flex flex-col items-center justify-center mt-6 px-4">
+    <main className="w-full relative flex flex-col items-center justify-center mt-6 px-4 mb-8">
         <ArrowBigLeftIcon className="self-start size-8" onClick={() => router.back()}/>
         { postLoading ? <PostSkeleton/> 
         : 
         <>
-        <article className="flex justify-between p-4 flex-grow w-full max-w-[600px]  border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border items-center space-y-4">
-        <section className="flex w-full sm:gap-x-6 gap-4 self-start items-start justify-center">
+        <article className="flex rounded-t-[20px] justify-between p-4 flex-grow w-full max-w-[600px]  border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border items-center space-y-4">
+        <section className="flex flex-col w-full sm:gap-x-6 gap-4 self-start items-start justify-center">
           <section className="flex gap-x-6 items-center justify-start">
           <img src={user.profilephoto} className="size-[50px] rounded-full object-fill"/>
+          <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
           </section>
   
-          <div className="flex flex-col self-start size-[90%] gap-3">
-            <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
+          <div className="flex flex-col self-start size-full gap-3">
+           
             <img
               src={photo}
-              className={`flex-grow self-start size-[40%] rounded-[30px] ${photo ? "flex" : "hidden"}`}
+              className={`flex-grow self-start size-full rounded-[30px] ${photo ? "flex" : "hidden"}`}
             />
             <p className="py-2 max-w-[400px] flex-grow text-sm sm:text-[16px] font-light tracking-wide">
               {content}

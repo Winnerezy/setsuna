@@ -4,6 +4,8 @@
     --global-loader-small-bg: #2c2c2c;
     --global-input-text: #0A0A0A;
     --global-primary-text: #ffffff;
+    --global-selection-text: #000000;
+    --global-primary-text-selection: #f5f5f5;
     --global-secondary-text: rgba(168, 81, 255, 0.8);
     --global-tetiary-text: rgba(209, 163, 255, 0.9);
     --global-border-bg: #2d2d2d;

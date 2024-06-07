@@ -18,8 +18,10 @@ declare type User = {
   firstname: string;
   lastname: string;
   username: string;
+  followers: string[];
   following: string[];
   profilephoto: string;
+  headerphoto: string;
 }
 
 declare type IContextType = {
