@@ -28,11 +28,11 @@ export default function Search() {
   }
   return (
     <main className="flex flex-col w-full min-h-screen mt-8 p-4 items-center">
-      <section className="relative flex items-center w-[800px] justify-center bg-[var(--global-border-bg)] p-1 px-2 rounded-[10px]">
-      <SearchIcon className="absolute left-2"/>
+      <section className="relative flex items-center w-full max-w-[600px] justify-center bg-[var(--global-border-bg)] p-1 px-2 rounded-[10px]">
+      <SearchIcon className="flex"/>
       <input type='search' ref={searchRef} onChange={handleSearch} className="flex-grow w-full max-w-[700px] p-2 max-h-10 bg-[var(--global-border-bg)] outline-none" placeholder="Find your entertainment..."/>
       </section>
-      <section className="flex flex-col gap-y-4 w-[800px] mt-4">
+      <section className="flex flex-col gap-y-4 w-full max-w-[600px] mt-4 items-center">
         { users?.map((user, index) => (<UserCard key={index} username={user?.username} profilephoto={user?.profilephoto} followers={user?.followers}/>)) }
       </section>
     </main>

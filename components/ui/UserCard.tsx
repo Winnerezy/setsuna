@@ -28,12 +28,15 @@ export default function UserCard({ username, profilephoto, followers} : UserCard
         }
       }
   return (
-    <article className='w-full h-24 flex items-center justify-between border-2 border-[var(--global-border-bg)] p-2 rounded-[10px]'>
+    <article className='w-full max-w-[600px] flex-grow h-24 flex items-center justify-between border-2 border-[var(--global-border-bg)] p-2 rounded-[10px]'>
         <div className='flex gap-x-4 items-center'>
         <Link href={`/profile/${username}`}><img src={ profilephoto } alt={ username } className='size-16 rounded-full'/></Link>
+        <Link href={`/profile/${username}`}>
         <p className='text-md'>
             @{ username }
         </p>
+        </Link>
+        
         </div>
         <div className={`${username === user.username ? 'hidden' : ''}`}>
             <Button onClick={handleFollow}>{ followed ? "Unfollow" : "Follow"}</Button>
