@@ -6,10 +6,15 @@ import Link from "next/link";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
+dayjs.extend(localizedFormat)
+dayjs.extend(relativeTime)
 export const PostCard = ({ post, updatePost }) => {
   const { user } = useContext(AuthContext)// user data function
-  const { content, author, photo, _id, likes: initialLikes, comments } = post;
+  const { content, author, photo, _id, likes: initialLikes, comments, createdAt } = post;
   const [likes, setLikes] = useState(initialLikes);
   const [isLoading, setIsLoading] = useState(false);
   const [profilephoto, setProfilePhoto] = useState<string | null>(null)
@@ -75,10 +80,13 @@ export const PostCard = ({ post, updatePost }) => {
         </section>
 
         <div className="flex flex-col self-start size-[90%] gap-3">
+          <div className="flex gap-x-4 items-center">
           <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
+          <p className="text-sm font-semibold">{ dayjs(createdAt).isBefore(new Date()) ? dayjs(createdAt).fromNow() : dayjs(createdAt).format('LL') }</p>
+          </div>
           <img
             src={photo}
-            className={`flex-grow size-full max-h-[500px] self-start rounded-[20px] object-contain ${photo ? "flex" : "hidden"}`}
+            className={`max-h-[300px] self-start rounded-[20px] ${photo ? "flex" : "hidden"}`}
           />
           <p className="py-2 max-w-[400px] flex-grow text-sm sm:text-[16px] font-light tracking-wide">
             {content}

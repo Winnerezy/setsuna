@@ -6,6 +6,7 @@ declare type Post = {
   likes: string[];
   tags: string[];
   comments: IComment[];
+  createdAt: string;
 }
 
 declare type CustomButton = { 
@@ -36,4 +37,10 @@ declare type IContextType = {
 declare type IComment = {
   author: string,
   comment: string
+}
+
+declare type UserCard = {
+  username: string;
+  profilephoto: string;
+  followers: string[];
 }

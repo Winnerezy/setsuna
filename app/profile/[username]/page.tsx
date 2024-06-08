@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../../context/AuthContext'
 import { PostCard } from '../../../components/home/PostCard'
 import { INITIAL_POST, INITIAL_USER } from '../../../lib/utils/initial'
+import { Button } from '../../../components/ui/Button'
 
 export default function Profile() {
     const { username } = useParams()
@@ -54,9 +55,13 @@ export default function Profile() {
       }
     }
 
+    const editProfile = () => {
+      
+    }
+
     console.log(profile.followers)
   return (
-    <main className='flex flex-col w-full min-h-screen'>
+    <main className='flex flex-col w-full min-h-screen sm:ml-16'>
       {
         profile._id !== '' ?
         <section className='flex flex-col w-full'>
@@ -73,9 +78,9 @@ export default function Profile() {
        </div>
        { 
           username === user.username ? 
-          <button className='w-36 h-10 p-2 rounded-[20px] border border-[var(--global-border-bg)] justify-self-end font-semibold'>Edit Profile</button>
+          <Button onClick={editProfile}>Edit Profile</Button>
           :
-          <button className='w-36 h-10 p-2 rounded-[20px] border border-[var(--global-border-bg)] font-semibold' onClick={handleFollow}>{ profile.followers && profile.followers.includes(user._id) ? "Unfollow" : "Follow"}</button>
+          <Button onClick={handleFollow}>{ profile.followers && profile.followers.includes(user._id) ? "Unfollow" : "Follow"}</Button>
         }
       </div>
       <nav className='w-full flex items-center justify-between gap-x-2 px-8 md:px-36 font-semibold text-center'>

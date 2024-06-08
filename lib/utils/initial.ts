@@ -5,7 +5,8 @@ export const INITIAL_POST = { // initial post data instead of making the post nu
     content: '',
     likes: [],
     tags: [] ,
-    comments: []
+    comments: [],
+    createdAt: '',
 }
 
 export const INITIAL_USER = {

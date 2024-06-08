@@ -81,8 +81,6 @@ export default function Home() {
     }
   };
 
-  console.log(posts)
-
   const updatePost = (updatedPost: Post) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
