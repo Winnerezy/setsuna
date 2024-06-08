@@ -99,7 +99,7 @@ export const PostCard = ({ post, updatePost }) => {
                   <p>{likes.length}</p>
                 </article>
                 <article className="flex gap-x-[5px] items-center justify-center">
-                <MessageCircle className="size-5" onClick={() => router.push(`post/${_id}`)}/>
+                <MessageCircle className="size-5" onClick={() => router.push(`/post/${_id}`)}/>
                 <p>{comments.length}</p>
                 </article>
                 <article className="flex gap-x-[5px] items-center justify-center">
