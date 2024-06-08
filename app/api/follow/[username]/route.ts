@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import User from "../../../../lib/utils/schemas/UserSchema";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/dist/server/api-utils";
 
 export const PUT = async(req: NextRequest, { params }: { params: { username: string } }) => {
@@ -9,10 +9,10 @@ export const PUT = async(req: NextRequest, { params }: { params: { username: str
         if(!username){
             return NextResponse.redirect('/404')
         }
-        const authToken = headers().get('authorization').split(' ')[1]
+        const authToken = cookies().get('authToken').value
         
         if(!authToken){
-            return new NextResponse(JSON.stringify({ message: 'Not Authorized To Follow'}), {
+            return new NextResponse(JSON.stringify({ message: 'Invalid Token'}), {
                 status: 401
             })
         }

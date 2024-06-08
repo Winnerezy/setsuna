@@ -9,11 +9,17 @@ import { useParams } from "next/navigation";
 import { PostSkeleton } from "../../../components/ui/PostSkeleton";
 import { useRouter } from "next/navigation";
 import { INITIAL_POST } from "../../../lib/utils/initial";
+import dayjs from "dayjs";
+import localizedFormat from 'dayjs/plugin/localizedFormat'
+import relativeTime from 'dayjs/plugin/relativeTime'
 
-const INITIAL_COMMENT = {
-  author: '',
-  comment: ''
-}
+dayjs.extend(localizedFormat)
+dayjs.extend(relativeTime)
+
+// const INITIAL_COMMENT = {
+//   author: '',
+//   comment: ''
+// }
 
 export default function PostPage (){
    
@@ -24,7 +30,7 @@ export default function PostPage (){
   const [postLoading, setPostLoading] = useState(false)
   const [comment, setComment] = useState<string>('')
 
-  const { content, author, photo, _id, likes: initialLikes, comments } = post;
+  const { content, author, photo, _id, likes: initialLikes, createdAt } = post;
   const [likes, setLikes] = useState<string[]>(initialLikes);
   const [isLoading, setIsLoading] = useState(false);
   const [commentLoading, setCommentLoading] = useState(false);
@@ -37,8 +43,8 @@ export default function PostPage (){
     try {
         setPostLoading(true)
         const res = await fetch(`/api/post/${postId}`, { headers: {
-            authorization: `Bearer ${localStorage.getItem('authToken')}`
-        } })
+            Accept: 'application/json'       
+           } })
         const ans =  await res.json()
         setPost(ans)  
         setLikes(ans.likes)
@@ -69,8 +75,7 @@ export default function PostPage (){
 
       await axios.put(`/api/post/like-post/${_id}`, { newLikes }, {
         headers: {
-          Accept: "application/json",
-          authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          Accept: "application/json"
         },
 
       });
@@ -94,7 +99,7 @@ export default function PostPage (){
         const res = await fetch('/api/post/comment', {
             method: 'POST',
             headers: {
-                authorization: `Bearer ${localStorage.getItem('authToken')}`
+                Accept: 'application/json'
             },
             body: JSON.stringify({
                 author: user.username,
@@ -140,11 +145,15 @@ export default function PostPage (){
         <section className="flex flex-col w-full sm:gap-x-6 gap-4 self-start items-start justify-center">
           <section className="flex gap-x-6 items-center justify-start">
           <img src={user.profilephoto} className="size-[50px] rounded-full object-fill"/>
-          <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
+          <div className="flex gap-x-4 items-center">
+                  <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
+                  <p className="text-sm font-semibold">{ dayjs(createdAt).isBefore(new Date()) ? dayjs(createdAt).fromNow() : dayjs(createdAt).format('LL') }</p>
+              </div>
+
           </section>
   
           <div className="flex flex-col self-start size-full gap-3">
-           
+             
             <img
               src={photo}
               className={`flex-grow self-start size-full rounded-[30px] ${photo ? "flex" : "hidden"}`}

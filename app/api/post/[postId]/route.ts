@@ -8,10 +8,10 @@ export const GET = async(req: NextRequest, { params }: { params : { postId: stri
     if(req.method === "GET"){
         try {
             mongodb()
-            const authToken = headers().get('authorization').split(' ')[1]
+            const userId = headers().get('user-id')
 
             const { postId } = params
-            const user = await User.findOne({ authToken: authToken })
+            const user = await User.findById(userId)
             if(!user){
                 return new NextResponse(JSON.stringify({ message: "No user found" }), {
                     status: 404

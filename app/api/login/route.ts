@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { mongodb } from "../../../lib/utils/mongodb";
 import User from "../../../lib/utils/schemas/UserSchema";
 import bcrypt from "bcrypt";
+import { cookies } from "next/headers";
+import { SignJWT } from "jose";
+
 export const POST = async (req: NextRequest, res: NextResponse) => {
   if (req.method === "POST") {
     try {
@@ -23,7 +26,21 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
         });
       }
 
-     return new NextResponse(JSON.stringify({ authToken: user.authToken }))
+      const authToken = await new SignJWT({ userId: user._id }) 
+      .setProtectedHeader({ alg: 'HS256' }) 
+      .sign(new TextEncoder().encode(process.env.SECRET_TOKEN));
+
+
+      cookies().set({
+        name: 'authToken',
+        value: authToken,
+        httpOnly: false, 
+        maxAge: 7 * 24 * 60 * 60,
+        sameSite: 'strict',
+        path: '/'
+      })
+
+     return new NextResponse(JSON.stringify({ message: 'Logged In' }))
      } catch (error) {
 
       return new NextResponse(

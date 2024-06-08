@@ -9,11 +9,12 @@ const [isLoading, setIsLoading] = useState(true)
 
 const fetchFeed = useCallback(async () => {
   try {
-    const options = {
-      accept: "application/json",
-      authorization: `Bearer ${localStorage.getItem("authToken")}`,
-    };
-    const res = await axios.get("api/feed", { headers: options });
+    const res = await axios.get("api/feed",
+       { headers:
+       {
+        Accept: "application/json"
+       }
+      });
     const posts = res.data;
     setPosts(posts);
   } catch (error) {
@@ -25,7 +26,6 @@ const fetchFeed = useCallback(async () => {
 
 useEffect(() => {
   fetchFeed();
-  return;
 }, []);
 
 const refetch = () => {  // refetching the posts when needed

@@ -44,9 +44,8 @@ export default function AuthForm({ type }: { type: string }) {
                    
                   };
                   const res = await fetch('api/login', options)
-                  const { message, authToken } = await res.json()
+                  const { message } = await res.json()
                 if(res.status === 200){
-                  localStorage.setItem('authToken', authToken)
                   router.push("/home");
                 }
                 setError(message)
@@ -67,9 +66,7 @@ export default function AuthForm({ type }: { type: string }) {
              email: data.email,
              password: data.password,
            };
-           const res = await axios.post("/api/register", body);
-           const authToken = res.data;
-           localStorage.setItem("authToken", authToken);
+           await axios.post("/api/register", body);
            router.push("/home");
          } catch (error) {
            console.error({ message: error.message });

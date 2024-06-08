@@ -13,7 +13,6 @@ export const GET = async(req: NextRequest, { params }: { params: { postId: strin
                     status: 404
                 })
             }
-            console.log(comments)
             return new NextResponse(JSON.stringify(comments))
         } catch (error) {
             return new NextResponse(JSON.stringify({ message: error.message }), {

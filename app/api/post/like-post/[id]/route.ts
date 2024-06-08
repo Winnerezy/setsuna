@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
 import Post from "../../../../../lib/utils/schemas/PostSchema";
 import User from "../../../../../lib/utils/schemas/UserSchema";
 import { mongodb } from "../../../../../lib/utils/mongodb";
+import { headers } from "next/headers";
 
 export const PUT = async (req: NextRequest, { params } : { params: { id: string } } ) => {
   if (req.method === "PUT") {
     try {
       await mongodb();
-      const authToken = headers().get("authorization").split(" ")[1];
+      const userId = headers().get('user-id')
+    
       const { newLikes } = await req.json()
       const { id } = params
 
@@ -17,7 +18,7 @@ export const PUT = async (req: NextRequest, { params } : { params: { id: string 
         return NextResponse.redirect(new URL("/home", req.url));
       }
 
-      const user = await User.findOne({ authToken: authToken });
+      const user = await User.findById(userId);
 
       if (!user) {
         return new NextResponse(JSON.stringify({ message: "No user found" }), {

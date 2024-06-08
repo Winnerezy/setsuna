@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isLoading, setIsLoading] = useState(false)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
+    const router = useRouter()
     const checkAuthUser = async() => {
         try {
             setIsLoading(true)
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 method: 'GET', 
                 headers: {
                     Accept: 'application/json',
-                    authorization: `Bearer ${localStorage.getItem('authToken')}`
+                    
                 }
             }
             const currentUser = await fetch('/api/user', options)
@@ -44,7 +45,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     useEffect(()=> {
-        checkAuthUser()
+        const checkAuth = async() => {
+           const result: boolean = await checkAuthUser()
+
+           if(!result){
+            router.push('/sign-up')
+           }
+        }
+        checkAuth()
     }, [])
 
     const value = {

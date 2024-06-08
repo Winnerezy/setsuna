@@ -31,11 +31,6 @@ const UserSchema = new mongoose.Schema(
       type: [mongoose.Types.ObjectId],
       default: [],
     },
-    authToken: {
-      type: String,
-      default: "",
-      required: true,
-    },
     profilephoto: {
       type: String
     }

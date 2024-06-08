@@ -10,6 +10,7 @@ import { useDropzone } from "react-dropzone";
 import { PostSkeleton } from "../../components/ui/PostSkeleton";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../../context/AuthContext";
+import { cookies } from "next/headers";
 
 export default function Home() {
   const [content, setContent] = useState("");
@@ -23,11 +24,6 @@ export default function Home() {
 
   const router = useRouter()
 
-  useEffect(()=> {
-    if(!localStorage.getItem('authToken')){
-      router.push('/sign-in')
-    }
-  }, [])
   useEffect(() => {
     if (initialPosts) {
       setPosts(initialPosts);
@@ -59,6 +55,7 @@ export default function Home() {
       const options = {
         accept: "application/json",
         authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        credentials: 'include'
       };
 
       const body = {
@@ -150,7 +147,7 @@ export default function Home() {
             />
           ))
           : 
-          <p className="text-3xl font-semibold tracking-wide">Share your experience today!</p>
+          ""
           }
       </section>
       </div>
