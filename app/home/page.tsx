@@ -10,7 +10,6 @@ import { useDropzone } from "react-dropzone";
 import { PostSkeleton } from "../../components/ui/PostSkeleton";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../../context/AuthContext";
-import { cookies } from "next/headers";
 
 export default function Home() {
   const [content, setContent] = useState("");
@@ -20,7 +19,7 @@ export default function Home() {
   const { posts: initialPosts, refetch, isLoading, error } = useFetchFeed();
   const [posts, setPosts] = useState<Post[]>([]);
 
-  const { user } = useContext(AuthContext) // logged in user data
+  const { user, checkAuthUser } = useContext(AuthContext) // logged in user data
 
   const router = useRouter()
 
@@ -29,6 +28,8 @@ export default function Home() {
       setPosts(initialPosts);
     }
   }, [initialPosts]);
+
+
 
   const handleInput = () => {
     setContent(contentRef.current.value);

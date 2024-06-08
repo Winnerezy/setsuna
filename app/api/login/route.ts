@@ -10,6 +10,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     try {
       mongodb();
       const { username, password } = await req.json();
+      console.log(username)
       const user = await User.findOne({ username });
       
       if(!user){
@@ -45,7 +46,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
 
       return new NextResponse(
         JSON.stringify({
-          message: error.message,
+          message: "error.message",
         }),
         {
           status: 500,

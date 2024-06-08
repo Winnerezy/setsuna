@@ -1,7 +1,7 @@
 'use client'
 
 import { SearchIcon } from "lucide-react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import UserCard from "../../components/ui/UserCard"
 
 export default function Search() {
@@ -11,12 +11,13 @@ export default function Search() {
 
   const [users, setUsers] = useState<UserCard[] | null>(null)
 
+  useEffect(()=> {
+    searchRef.current.focus()
+  }, [])
+
   const handleSearch = async() => {
-    setSearch(searchRef.current.value)
-    if(search.trim() === ''){
-      return;
-    }
     try {
+      setSearch(searchRef.current.value)
       const res = await fetch(`/api/search/${search}`, {
         method: 'GET'
       })

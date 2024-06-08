@@ -4,7 +4,13 @@ import { NextRequest, NextResponse } from "next/server"
 
 export default async function middleware (req: NextRequest){
 
-    const authToken = cookies().get('authToken').value
+    const url = req.nextUrl
+
+    if (url.pathname === '/api/login' || url.pathname === '/api/register') {
+        return NextResponse.next()
+    }
+
+    const authToken = cookies().get('authToken')?.value
     
     if(!authToken) {
     return NextResponse.redirect(new URL('/sign-up', req.url))

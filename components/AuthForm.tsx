@@ -50,7 +50,7 @@ export default function AuthForm({ type }: { type: string }) {
                 }
                 setError(message)
         } catch (error) {
-            setError(error.message )
+            setError(error.message)
         } finally {
           setIsLoading(false)
         }
