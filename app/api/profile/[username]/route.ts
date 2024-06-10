@@ -2,11 +2,13 @@
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import User from "../../../../lib/utils/schemas/UserSchema";
+import { mongodb } from "../../../../lib/utils/mongodb";
+import middleware from "../../middleware";
 
 export const GET = async(req: NextRequest, { params }: { params: { username: string } }) => {
     try {
-
-    const { username } = params
+        await mongodb();
+        const { username } = params
     const profile = await User.findOne({ username }, { email: false, password: false, authToken: false })
     // }
 

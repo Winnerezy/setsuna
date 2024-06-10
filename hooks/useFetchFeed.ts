@@ -2,6 +2,7 @@ import axios from "axios";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { PostContext } from "../context/PostContext";
 
+
 export const useFetchFeed = () => {
 const { posts, setPosts } = useContext(PostContext)
 const [error, setError] = useState(null)

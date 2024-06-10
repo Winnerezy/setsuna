@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
 import User from "../../../../lib/utils/schemas/UserSchema"
+import { mongodb } from "../../../../lib/utils/mongodb"
+import middleware from "../../middleware";
 
 export const GET = async(req: NextRequest, { params }: { params: { data: string } }) => {
     try {
+        await mongodb();
         const { data } = params
         const username = RegExp(data, 'i')
         const users = await User.find({ username })

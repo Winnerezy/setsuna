@@ -26,7 +26,7 @@ declare type User = {
 }
 
 declare type IContextType = {
-  user: User;
+  user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   setUser: React.Dispatch<React.SetStateAction<User>>;
@@ -44,3 +44,4 @@ declare type UserCard = {
   profilephoto: string;
   followers: string[];
 }
+

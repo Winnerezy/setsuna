@@ -3,12 +3,18 @@ import Post from "../../../../../lib/utils/schemas/PostSchema";
 import User from "../../../../../lib/utils/schemas/UserSchema";
 import { mongodb } from "../../../../../lib/utils/mongodb";
 import { headers } from "next/headers";
+import middleware from "../../../middleware";
 
-export const PUT = async (req: NextRequest, { params } : { params: { id: string } } ) => {
+interface CustomNextRequest extends NextRequest {
+  user?: string; 
+}
+
+export const PUT = async (req: CustomNextRequest, { params } : { params: { id: string } } ) => {
   if (req.method === "PUT") {
     try {
       await mongodb();
-      const userId = headers().get('user-id')
+      await middleware(req)
+      const userId = req.user
     
       const { newLikes } = await req.json()
       const { id } = params

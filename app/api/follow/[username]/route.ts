@@ -1,23 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import User from "../../../../lib/utils/schemas/UserSchema";
-import { cookies, headers } from "next/headers";
-import { redirect } from "next/dist/server/api-utils";
+import { headers } from "next/headers";
+import { mongodb } from "../../../../lib/utils/mongodb";
+import middleware from "../../middleware";
+import { NextApiRequest } from "next";
 
-export const PUT = async(req: NextRequest, { params }: { params: { username: string } }) => {
+interface CustomNextRequest extends NextRequest {
+    user?: string; 
+  }
+  
+export const PUT = async(req: CustomNextRequest, { params } : { params :{ username: string } }) => {
     try {
+        await mongodb();
+        await middleware(req)
+        const userId = req.user
         const { username } = params
-        if(!username){
-            return NextResponse.redirect('/404')
-        }
-        const authToken = cookies().get('authToken').value
-        
-        if(!authToken){
+
+        if(!userId){
             return new NextResponse(JSON.stringify({ message: 'Invalid Token'}), {
                 status: 401
             })
         }
-        const { _id } = await User.findOne({ authToken: authToken })
+        
+        const { _id } = await User.findById(userId)
+
+        if(!_id){
+            return new NextResponse(JSON.stringify({ message: 'No user found' }), {
+                status: 404
+            })
+        }
+
         const { _id: followingUserId, followers } = await User.findOne({ username })
+        
         if(followers.includes(_id)) {
             await User.findOneAndUpdate({ username }, { $pull : {followers: _id }})
             await User.findByIdAndUpdate(_id, { $pull : {following: followingUserId }})

@@ -11,13 +11,9 @@ export default function Search() {
 
   const [users, setUsers] = useState<UserCard[] | null>(null)
 
-  useEffect(()=> {
-    searchRef.current.focus()
-  }, [])
-
   const handleSearch = async() => {
+    setSearch(searchRef.current.value)
     try {
-      setSearch(searchRef.current.value)
       const res = await fetch(`/api/search/${search}`, {
         method: 'GET'
       })

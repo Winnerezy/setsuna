@@ -3,10 +3,12 @@ import { NextRequest, NextResponse } from "next/server";
 import User from "../../../../lib/utils/schemas/UserSchema";
 import Post from "../../../../lib/utils/schemas/PostSchema";
 import { mongodb } from "../../../../lib/utils/mongodb";
+import middleware from "../../middleware";
 
 export const GET = async(req: NextRequest, { params }: { params: { username: string } }) => {
   try {
-    await mongodb()
+    await mongodb();
+
     const { username } = params
     const user = await User.findOne({ username })
 

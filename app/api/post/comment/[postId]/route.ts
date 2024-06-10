@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { mongodb } from "../../../../../lib/utils/mongodb"
 import Post from "../../../../../lib/utils/schemas/PostSchema"
+import middleware from "../../../middleware";
 
 export const GET = async(req: NextRequest, { params }: { params: { postId: string } } ) => {
-    await mongodb()
     if(req.method === "GET"){
         try {
+            await mongodb();
+            await middleware(req)
             const { postId } = params
             const { comments } = await Post.findById(postId).sort({ createdAt: -1 })
             if(!comments){

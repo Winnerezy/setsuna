@@ -2,14 +2,14 @@
 
 import axios from "axios";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { TextareaAutosize } from "@mui/base";
-import { PostCard } from "../../components/home/PostCard";
 import { useFetchFeed } from "../../hooks/useFetchFeed";
-import { ImageIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { PostSkeleton } from "../../components/ui/PostSkeleton";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../../context/AuthContext";
+import { TextareaAutosize } from "@mui/base";
+import { PostSkeleton } from "../../components/ui/PostSkeleton";
+import { PostCard } from "../../components/home/PostCard";
+import { ImageIcon } from "lucide-react";
 
 export default function Home() {
   const [content, setContent] = useState("");
@@ -17,19 +17,15 @@ export default function Home() {
   const contentRef = useRef(null);
   const [photo, setPhoto] = useState(null);
   const { posts: initialPosts, refetch, isLoading, error } = useFetchFeed();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Post[] | null>(null);
 
-  const { user, checkAuthUser } = useContext(AuthContext) // logged in user data
+  const { user } = useContext(AuthContext) // logged in user data
 
   const router = useRouter()
 
   useEffect(() => {
-    if (initialPosts) {
       setPosts(initialPosts);
-    }
   }, [initialPosts]);
-
-
 
   const handleInput = () => {
     setContent(contentRef.current.value);
@@ -54,9 +50,7 @@ export default function Home() {
     try {
       setLoading(true);
       const options = {
-        accept: "application/json",
-        authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        credentials: 'include'
+        Accept: "application/json",
       };
 
       const body = {
@@ -79,21 +73,13 @@ export default function Home() {
     }
   };
 
-  const updatePost = (updatedPost: Post) => {
-    setPosts((prevPosts) =>
-      prevPosts.map((post) =>
-        post._id === updatedPost._id ? updatedPost : post
-      )
-    );
-  };
-
   return (
     <main className="relative flex flex-col w-full h-full items-center justify-center">
       <div className="size-full p-5 flex flex-col items-center justify-center">
         <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border rounded-[20px] items-center space-y-4">
           <section className="relative flex w-full space-x-4">
             <section className="flex gap-x-6 items-start justify-start h-full size-[60px]">
-              <img src={user.profilephoto} className="size-[50px] rounded-full object-fill cursor-pointer" onClick={() => router.push(`/profile/${user.username}`)}/>
+              <img src={user?.profilephoto} className="size-[50px] rounded-full object-fill cursor-pointer" onClick={() => router.push(`/profile/${user?.username}`)}/>
             </section>
             <div className="flex flex-col size-full">
               <img
@@ -109,7 +95,7 @@ export default function Home() {
                 onChange={handleInput}
                 ref={contentRef}
                 maxLength= {300}
-              />
+                />
             </div>
             <p className="absolute right-0 -bottom-4 text-sm">{ content.length }/300</p>
           </section>
@@ -132,19 +118,16 @@ export default function Home() {
             </div>
           </section>
         </article>
-        <section className="size-full flex flex-col items-center justify-center py-5 mb-16 sm:mb-0">
-        {isLoading
-          ? Array(3)
-              .fill(null)
-              .map((_, index) => <PostSkeleton key={index} />)
+        <section className="size-full flex flex-col items-center justify-center py-5 mb-10 sm:mb-0">
+        {isLoading && !posts
+          ? <PostSkeleton />
           : error
           ? <p>{error.message}</p>
-          : posts.length !== 0 ? 
-          posts.map((post) => (
+          : posts ? 
+          posts?.map((post) => (
             <PostCard
               key={post._id}
               post={post}
-              updatePost={updatePost}
             />
           ))
           : 

@@ -12,7 +12,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
-export const PostCard = ({ post, updatePost }) => {
+export const PostCard = ({ post }) => {
   const { user } = useContext(AuthContext)// user data function
   const { content, author, photo, _id, likes: initialLikes, comments, createdAt } = post;
   const [likes, setLikes] = useState(initialLikes);
@@ -26,7 +26,8 @@ export const PostCard = ({ post, updatePost }) => {
       const res = await fetch(`/api/profile/${author}`, {
         method: 'GET',
         headers: {
-          authorization: `Bearer ${localStorage.getItem('authToken')}`
+          Accept: "application/json",
+          "content-type": "application/json"
         }
       })
       const { profilephoto } = await res.json()
@@ -52,18 +53,19 @@ export const PostCard = ({ post, updatePost }) => {
       await axios.put(`/api/post/like-post/${_id}`, { newLikes }, {
         headers: {
           Accept: "application/json",
-          authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
+          "content-type": "application/json"
+        }
 
       });
       const res = await axios.get(`/api/user-post/${_id}`, {
         headers: {
-          authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
+          Accept: "application/json",
+          "content-type": "application/json"
+        }
         
       });
-      const updatedPost = res.data;
-      updatePost(updatedPost);
+      // const updatedPost = res.data;
+      // updatePost(updatedPost);
     } catch (error) {
       console.error(error);
     } finally {
@@ -99,7 +101,7 @@ export const PostCard = ({ post, updatePost }) => {
                   <p>{likes.length}</p>
                 </article>
                 <article className="flex gap-x-[5px] items-center justify-center">
-                <MessageCircle className="size-5" onClick={() => router.push(`/post/${_id}`)}/>
+                <MessageCircle className="size-5" onClick={() => router.push(`/post/${author}/${_id}`)}/>
                 <p>{comments.length}</p>
                 </article>
                 <article className="flex gap-x-[5px] items-center justify-center">

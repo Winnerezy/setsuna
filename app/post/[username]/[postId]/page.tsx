@@ -4,11 +4,10 @@ import axios from "axios";
 import { ArrowBigLeftIcon, BookmarkIcon, HeartIcon, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useContext, useRef, useCallback } from "react";
-import { AuthContext } from "../../../context/AuthContext";
+import { AuthContext } from "../../../../context/AuthContext";
 import { useParams } from "next/navigation";
-import { PostSkeleton } from "../../../components/ui/PostSkeleton";
-import { useRouter } from "next/navigation";
-import { INITIAL_POST } from "../../../lib/utils/initial";
+import { PostSkeleton } from "../../../../components/ui/PostSkeleton";
+import { INITIAL_POST } from "../../../../lib/utils/initial";
 import dayjs from "dayjs";
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -16,16 +15,11 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
 
-// const INITIAL_COMMENT = {
-//   author: '',
-//   comment: ''
-// }
-
 export default function PostPage (){
    
   const [post, setPost] = useState<Post>(INITIAL_POST)
   const { user } = useContext(AuthContext)// user data function
-  const { postId } = useParams()
+  const { username, postId } = useParams()
 
   const [postLoading, setPostLoading] = useState(false)
   const [comment, setComment] = useState<string>('')
@@ -33,16 +27,15 @@ export default function PostPage (){
   const { content, author, photo, _id, likes: initialLikes, createdAt } = post;
   const [likes, setLikes] = useState<string[]>(initialLikes);
   const [isLoading, setIsLoading] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState<string>('')
   const [commentLoading, setCommentLoading] = useState(false);
   const commentRef = useRef<HTMLInputElement>(null)
-  const [commentList, setCommentList] = useState<IComment[]>([])
-  
-  const router = useRouter()
+  const [commentList, setCommentList] = useState<IComment[] | null>(null)
 
   const fetchPost = async() => {
     try {
         setPostLoading(true)
-        const res = await fetch(`/api/post/${postId}`, { headers: {
+        const res = await fetch(`/api/post/${username}/${postId}`, { headers: {
             Accept: 'application/json'       
            } })
         const ans =  await res.json()
@@ -59,17 +52,34 @@ export default function PostPage (){
     fetchPost()
   }, [])
 
+  useEffect(()=> {
+    const profileImage = async() => {
+      const res = await fetch(`/api/profile/${username}`, {
+        method: 'GET',
+        headers: {
+          Accept: "application/json",
+          "content-type": "application/json"
+        }
+      })
+      const { profilephoto } = await res.json()
+      setProfilePhoto(profilephoto)
+    }
+    profileImage()
+  }, [])
+
+  // console.log(author)
+
   const handleLike = async () => {
     try {
       setIsLoading(true)
       let newLikes = [...likes]
 
-      const hasLiked = newLikes.includes(user._id)
+      const hasLiked = newLikes.includes(user?._id)
 
       if(hasLiked){
-        newLikes = newLikes.filter(userId => userId !== user._id)
+        newLikes = newLikes.filter(userId => userId !== user?._id)
       } else {
-        newLikes.push(user._id)
+        newLikes.push(user?._id)
       }
       setLikes(newLikes)
 
@@ -137,14 +147,13 @@ export default function PostPage (){
   return (
 
     <main className="w-full relative flex flex-col items-center justify-center mt-6 px-4 mb-8">
-        <ArrowBigLeftIcon className="self-start size-8" onClick={() => router.back()}/>
         { postLoading ? <PostSkeleton/> 
         : 
         <>
         <article className="flex rounded-t-[20px] justify-between p-4 flex-grow w-full max-w-[600px]  border-[var(--global-border-bg)] bg-[var(--global-post-bg)] border items-center space-y-4">
         <section className="flex flex-col w-full sm:gap-x-6 gap-4 self-start items-start justify-center">
           <section className="flex gap-x-6 items-center justify-start">
-          <img src={user.profilephoto} className="size-[50px] rounded-full object-fill"/>
+          <img src={profilePhoto} className="size-[50px] rounded-full object-fill"/>
           <div className="flex gap-x-4 items-center">
                   <Link className="font-semibold" href={`/profile/${author}`}>{`@${author}`}</Link>
                   <p className="text-sm font-semibold">{ dayjs(createdAt).isBefore(new Date()) ? dayjs(createdAt).fromNow() : dayjs(createdAt).format('LL') }</p>
@@ -164,13 +173,13 @@ export default function PostPage (){
   
             <section className="flex flex-col w-full gap-y-2">
                 <div className="flex gap-x-4 text-md">
-                <article className={`flex gap-x-[5px] items-center justify-center ${likes.includes(user._id) ? "text-[var(--global-like-button)]" : ""}`}>
-                 <button disabled={isLoading} className="z-40"><HeartIcon className={`size-5 ${likes.includes(user._id) ? "fill-[var(--global-like-button)] likebtn" : ""}`} onClick={handleLike} /></button> 
+                <article className={`flex gap-x-[5px] items-center justify-center ${likes.includes(user?._id) ? "text-[var(--global-like-button)]" : ""}`}>
+                 <button disabled={isLoading} className="z-40"><HeartIcon className={`size-5 ${likes.includes(user?._id) ? "fill-[var(--global-like-button)] likebtn" : ""}`} onClick={handleLike} /></button> 
                   <p>{likes.length}</p>
                 </article>
                   <article className="flex gap-x-[5px] items-center justify-center">
                   <MessageCircle className="size-5" />
-                  <p>{commentList.length}</p>
+                  <p>{commentList?.length}</p>
                   </article>
                   <article className="flex gap-x-[5px] items-center justify-center">
                   <BookmarkIcon className="size-5" />
@@ -187,7 +196,7 @@ export default function PostPage (){
                 <button disabled={commentLoading} className="w-24 h-10 p-2 rounded-[20px] border border-[var(--global-border)] self-end" onClick={handlePost}>Post</button> 
             </div>
             <div>
-                { commentList.map((comment) => (
+                { commentList?.map((comment) => (
                     <div className="w-full h-14 flex items-center justify-between p-2 bg-[var(--global-post-bg)] border border-t-[var(--global-border-bg)] border-b-0 border-l-0 border-r-0" key={comment.comment}>
                         <article className="flex gap-2">
                         <p>@{ comment.author }</p>

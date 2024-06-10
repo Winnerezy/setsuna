@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import Post from "../../../../lib/utils/schemas/PostSchema";
+import { mongodb } from "../../../../lib/utils/mongodb";
+import middleware from "../../middleware";
 
-export const POST = async(req: NextRequest) => {
+export const POST = async(req: NextRequest, res: NextResponse) => {
     if(req.method === "POST"){
         try {
+            await mongodb();
             const { author, comment, postId } = await req.json()
             const content = { author, comment }
             if(!postId){

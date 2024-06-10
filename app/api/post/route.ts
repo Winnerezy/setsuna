@@ -3,13 +3,18 @@ import { mongodb } from "../../../lib/utils/mongodb"
 import Post from "../../../lib/utils/schemas/PostSchema"
 import User from "../../../lib/utils/schemas/UserSchema"
 import { headers } from "next/headers"
+import middleware from "../middleware"
 
-export const POST = async(req: NextRequest) => {
+interface CustomNextRequest extends NextRequest {
+    user?: string; // Define the user property
+}
+
+export const POST = async(req: CustomNextRequest, res: NextResponse) => {
     if(req.method === "POST"){
         try {
-            mongodb()
-            const userId = headers().get('user-id')
-
+            await mongodb()
+            await middleware(req)
+            const userId = req.user
             const { content, photo } = await req.json()
             const user = await User.findById(userId)
             if(!user){

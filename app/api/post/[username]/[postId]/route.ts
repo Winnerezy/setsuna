@@ -1,15 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
-import { mongodb } from "../../../../lib/utils/mongodb"
+import { mongodb } from "../../../../../lib/utils/mongodb"
 import { headers } from "next/headers"
-import Post from "../../../../lib/utils/schemas/PostSchema"
-import User from "../../../../lib/utils/schemas/UserSchema"
+import Post from "../../../../../lib/utils/schemas/PostSchema"
+import User from "../../../../../lib/utils/schemas/UserSchema"
+import middleware from "../../../middleware"
 
-export const GET = async(req: NextRequest, { params }: { params : { postId: string } }) => {
+interface CustomNextRequest extends NextRequest {
+  user?: string; 
+}
+
+export const GET = async(req: CustomNextRequest, { params }: { params : { postId: string } }) => {
     if(req.method === "GET"){
         try {
-            mongodb()
-            const userId = headers().get('user-id')
-
+            await mongodb()
+            await middleware(req)
+            const userId = req.user
             const { postId } = params
             const user = await User.findById(userId)
             if(!user){
