@@ -17,7 +17,9 @@ export const GET = async(req: CustomNextRequest, res: NextResponse) => {
       await middleware(req)
       const userId = req.user
       const user = await User.findById(userId)
-      const feed = await Post.find({ $or : [ { userId }, { userId: user.following }]}).sort({ createdAt: -1 })
+      const feed = await Post
+      .find({ $or : [ { userId }, { userId: user.following }]})
+      .sort({ createdAt: -1 })
   
       const userPosts = await Post.find({ userId })
       for(let userPost of userPosts){

@@ -45,7 +45,7 @@ export const POST = async (req: NextRequest, res: NextApiResponse) => {
         name: "authToken",
         value: authToken,
         httpOnly: true,
-        maxAge: 24 * 60 * 60,
+        maxAge: 7 * 24 * 60 * 60,
         path: "/",
         sameSite: "strict",
         secure: process.env.NODE_ENV === "production"

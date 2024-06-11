@@ -45,3 +45,10 @@ declare type UserCard = {
   followers: string[];
 }
 
+declare type State = {
+  page: string;
+}
+
+declare type Action = 
+| { type: 'posts'}
+| { type: 'saved-posts'};

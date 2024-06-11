@@ -48,3 +48,36 @@ export const POST = async(req: CustomNextRequest, res: NextResponse) => {
     }
 }
 
+export const PUT = async(req: CustomNextRequest, res: NextResponse) => {
+    if(req.method === "PUT"){
+        try {
+            await mongodb()
+            await middleware(req)
+            const { postId, content, photo } = await req.json()
+            if(!postId){
+                return new NextResponse(JSON.stringify({ message: "No user found" }), {
+                    status: 404
+                })
+            }
+            await Post.findByIdAndUpdate(postId, {
+                content, 
+                photo
+            })
+            return new NextResponse(JSON.stringify({
+                message: "Post Edited"
+            }), {
+                status: 200,
+                
+            })
+        } catch (error) {
+            return new NextResponse(
+              JSON.stringify({
+                message: error.message,
+              }),
+              {
+                status: 500,
+              }
+            );
+        }
+    }
+}

@@ -1,15 +1,15 @@
 'use client'
 
 import { TextareaAutosize } from '@mui/base';
-import React, { useCallback, useContext, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone';
-import { useFetchFeed } from '../../hooks/useFetchFeed';
+import { useFetchFeed } from '../../../hooks/useFetchFeed';
 import axios from 'axios';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../../context/AuthContext';
 import { ImageIcon } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
-export default function page() {
+export default function editPost() {
 
   const [content, setContent] = useState("");
   const [photo, setPhoto] = useState(null);
@@ -19,6 +19,8 @@ export default function page() {
   const { user } = useContext(AuthContext) // logged in user data
 
   const router = useRouter();
+
+  const { postId } = useParams()
 
   const handleInput = () => {
     setContent(contentRef.current.value);
@@ -47,11 +49,11 @@ export default function page() {
       };
 
       const body = {
-        userId: user._id,
-        content: content,
-        photo: photo,
+        postId,
+        content,
+        photo,
       };
-      const res = await axios.post("api/post", body, { headers: options });
+      const res = await axios.put("/api/post", body, { headers: options });
       if (res.status !== 201) {
         throw new Error("Error found");
       }
@@ -65,6 +67,23 @@ export default function page() {
       setLoading(false);
     }
   };
+
+  const fetchPost = async() => {
+    try {
+        const res = await fetch(`/api/post/${user.username}/${postId}`, { headers: {
+            Accept: 'application/json'       
+           } })
+        const ans =  await res.json()
+        setPhoto(ans.photo)
+        setContent(ans.content)
+    } catch (error) {
+        console.error(error)
+    } 
+  }
+  useEffect(()=> {
+    fetchPost()
+  }, [])
+
   return (
     <div className='flex items-center justify-center min-h-screen p-4'>
         <article className="flex flex-col justify-between p-4 flex-grow w-full max-w-[600px] min-h-[400px] border-[var(--global-border-bg)] border bg-[var(--global-post-bg)] rounded-[20px] items-center space-y-8">

@@ -78,7 +78,7 @@ export const PostCard = ({ post }) => {
       <section className="flex w-full sm:gap-x-6 gap-4 self-start items-start justify-center">
         <section className="flex gap-x-6 items-center justify-start h-full size-[60px]">
         <img src={ profilephoto } className="size-[50px] rounded-full object-fill"/>
-        <MoreVerticalIcon className="size-6 absolute right-2 top-2 hover:bg-[var(--global-border-bg)] rounded-full"/>
+        <MoreVerticalIcon className="size-6 absolute right-2 top-2 hover:bg-[var(--global-border-bg)] rounded-full z-40" onClick={ () => user.username === author ? router.push(`/edit/${_id}`) : "" }/>
         </section>
 
         <div className="flex flex-col self-start size-[90%] gap-3">
